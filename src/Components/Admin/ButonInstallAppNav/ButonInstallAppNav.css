@@ -1,0 +1,33 @@
+.btnInstall {
+    min-height: 54px;
+    padding: 0.5rem 1rem;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(135deg, #0c71cf 0%, #1b8dff 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 12px 24px rgba(12, 113, 207, 0.24);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btnInstall:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(12, 113, 207, 0.3);
+    filter: brightness(1.02);
+}
+
+.btnInstall:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@media (max-width: 1024px) {
+    .btnInstall {
+        min-height: 44px;
+        border-radius: 12px;
+        padding: 0.45rem 0.75rem;
+    }
+}

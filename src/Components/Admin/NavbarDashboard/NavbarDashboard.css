@@ -1,0 +1,291 @@
+:root {
+  --sidebar-bg: #0f172a;
+  --sidebar-bg-2: #111c34;
+  --primary: #0c71cf;
+  --primary-soft: rgba(12, 113, 207, 0.14);
+  --text-light: #f8fafc;
+  --text-soft: #94a3b8;
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 0 18px 40px rgba(2, 6, 23, 0.22);
+}
+
+.navbarDashboard {
+  width: 270px;
+  min-width: 270px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background:
+    linear-gradient(180deg, #0b5fb1 0%, #0c71cf 12%, #0f172a 12%, #0f172a 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  transition: transform 0.25s ease;
+}
+
+.mobileAdminTopbar {
+  display: none;
+}
+
+.sidebarToggleBtn,
+.sidebarOverlay {
+  display: none;
+}
+
+.sidebarHeader {
+  padding: 1.4rem 1rem 1rem;
+}
+
+.logoBox {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  padding: 0.9rem 0.85rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-soft);
+  backdrop-filter: blur(8px);
+}
+
+.logoBox img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.35rem;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  
+}
+
+.logoText strong {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.logoText span {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.7rem 0.85rem 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebarNav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  color: var(--text-soft);
+  padding: 0.95rem 1rem;
+  border-radius: 16px;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.sidebarLink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-light);
+  transform: translateX(4px);
+}
+
+.sidebarIcon {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.95rem;
+}
+
+.sidebarLabel {
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.activeLink {
+  background: linear-gradient(135deg, rgba(12, 113, 207, 0.24), rgba(12, 113, 207, 0.08));
+  color: #ffffff;
+  border: 1px solid rgba(12, 113, 207, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.activeLink .sidebarIcon {
+  background: linear-gradient(135deg, #0c71cf, #1b8dff);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(12, 113, 207, 0.28);
+}
+
+.sidebarFooter {
+  padding: 1rem 0.85rem 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Si Logout renderiza un botón o link */
+.sidebarFooter button,
+.sidebarFooter a {
+  width: 100%;
+  min-height: 50px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  transition: all 0.25s ease;
+}
+
+.sidebarFooter button:hover,
+.sidebarFooter a:hover {
+  background: linear-gradient(135deg, #0c71cf, #1b8dff);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 992px) {
+  .navbarDashboard {
+    width: 88px;
+    min-width: 88px;
+  }
+
+  .logoText,
+  .sidebarLabel {
+    display: none;
+  }
+
+  .logoBox {
+    justify-content: center;
+    padding: 0.85rem;
+  }
+
+  .sidebarLink {
+    justify-content: center;
+    padding: 0.9rem 0.6rem;
+  }
+
+  .sidebarIcon {
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobileAdminTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+    width: 100%;
+    min-height: 58px;
+    padding: 0.5rem 0.7rem;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
+    margin-bottom: 0.75rem;
+    position: sticky;
+    top: 0;
+    z-index: 1150;
+  }
+
+  .mobileAdminBrand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  .mobileAdminBrand img {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 0.2rem;
+  }
+
+  .sidebarToggleBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: static;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 1rem;
+    box-shadow: 0 8px 20px rgba(2, 6, 23, 0.24);
+    cursor: pointer;
+  }
+
+  .sidebarOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    border: none;
+    background: rgba(2, 6, 23, 0.42);
+    z-index: 1250;
+    cursor: pointer;
+  }
+
+  .navbarDashboard {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: min(260px, 86vw);
+    min-width: min(260px, 86vw);
+    height: 100dvh;
+    z-index: 1300;
+    transform: translateX(-100%);
+    overflow-y: auto;
+  }
+
+  .navbarDashboard.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebarHeader {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, #0b5fb1 0%, #0c71cf 58%, rgba(15, 23, 42, 0.96) 100%);
+  }
+}

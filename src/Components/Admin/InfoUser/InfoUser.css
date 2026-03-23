@@ -1,0 +1,128 @@
+.btn-sesion {
+  min-height: 54px;
+  padding: 0.5rem 0.85rem 0.5rem 0.55rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  color: #172033;
+}
+
+.btn-sesion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.10);
+  background: #ffffff;
+}
+
+.userAvatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0c71cf, #1b8dff);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 22px rgba(12, 113, 207, 0.22);
+}
+
+.userAvatar .icon {
+  font-size: 0.95rem;
+}
+
+.userInfoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.userLabel {
+  font-size: 0.74rem;
+  color: #667085;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.userInfoText strong {
+  font-size: 0.94rem;
+  color: #172033;
+  font-weight: 800;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* loading */
+.loadingUserSession {
+  min-height: 54px;
+  padding: 0.5rem 0.85rem 0.5rem 0.55rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.userAvatarSkeleton {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+  background-size: 200% 100%;
+  animation: skeletonMove 1.2s infinite linear;
+}
+
+.userTextSkeleton {
+  width: 110px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%);
+  background-size: 200% 100%;
+  animation: skeletonMove 1.2s infinite linear;
+}
+
+@keyframes skeletonMove {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .btn-sesion,
+  .loadingUserSession {
+    padding: 0.45rem 0.7rem 0.45rem 0.45rem;
+    border-radius: 14px;
+    gap: 0.6rem;
+  }
+
+  .userAvatar,
+  .userAvatarSkeleton {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .userInfoText strong {
+    max-width: 100px;
+    font-size: 0.88rem;
+  }
+
+  .userLabel {
+    font-size: 0.7rem;
+  }
+}

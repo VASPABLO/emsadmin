@@ -1,0 +1,221 @@
+:root {
+  --primary: #0c71cf;
+  --primary-dark: #084f92;
+  --bg-soft: #f5f7fb;
+  --bg-card: #ffffff;
+  --text-main: #172033;
+  --text-soft: #667085;
+  --border-soft: rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-hover: 0 18px 44px rgba(15, 23, 42, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.formContain {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background:
+    radial-gradient(circle at top left, rgba(12, 113, 207, 0.08), transparent 25%),
+    linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 28px;
+  box-shadow: 0 25px 55px rgba(15, 23, 42, 0.08);
+  padding: 2rem;
+}
+
+.loginHeader {
+  margin-bottom: 1.5rem;
+}
+
+.loginBadge {
+  display: inline-flex;
+  padding: 0.45rem 0.85rem;
+  background: rgba(12, 113, 207, 0.09);
+  color: var(--primary);
+  border: 1px solid rgba(12, 113, 207, 0.12);
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+}
+
+.loginHeader h2 {
+  margin: 0 0 0.5rem;
+  color: var(--text-main);
+  font-size: 2rem;
+}
+
+.loginHeader p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+  font-size: 0.96rem;
+}
+
+.formAuth {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputsAuth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputsAuth label {
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.inputWrap,
+.deFlexInputs {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  min-height: 54px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s ease;
+}
+
+.inputWrap:focus-within,
+.deFlexInputs:focus-within {
+  border-color: rgba(12, 113, 207, 0.3);
+  box-shadow: 0 0 0 4px rgba(12, 113, 207, 0.08);
+}
+
+.inputIcon {
+  width: 46px;
+  min-width: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+}
+
+.inputWrap input,
+.deFlexInputs input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 0.96rem;
+  padding: 0 0.8rem 0 0;
+}
+
+.inputWrap input::placeholder,
+.deFlexInputs input::placeholder {
+  color: #98a2b3;
+}
+
+.togglePasswordBtn {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.togglePasswordBtn:hover {
+  color: var(--primary);
+  background: rgba(12, 113, 207, 0.06);
+}
+
+.errorBox {
+  background: rgba(230, 57, 70, 0.08);
+  color: #c1121f;
+  border: 1px solid rgba(230, 57, 70, 0.14);
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.btn {
+  min-height: 54px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), #1b8dff);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 16px 30px rgba(12, 113, 207, 0.22);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 35px rgba(12, 113, 207, 0.28);
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.loginFooterInfo {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.2rem;
+}
+
+.devModeText,
+.prodModeText {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.devModeText {
+  color: #0c71cf;
+}
+
+.prodModeText {
+  color: #667085;
+}
+
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 1.25rem;
+    border-radius: 22px;
+  }
+
+  .loginHeader h2 {
+    font-size: 1.7rem;
+  }
+
+  .inputWrap,
+  .deFlexInputs,
+  .btn {
+    min-height: 48px;
+  }
+
+  .inputsAuth label {
+    font-size: 0.92rem;
+  }
+}

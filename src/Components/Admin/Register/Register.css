@@ -1,0 +1,40 @@
+.deFlexPass{
+    display: flex;
+    width: 100%;
+}
+.deFlexPass button{
+    background-color: transparent;
+    border: none;
+}
+
+.btnSave {
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0c71cf 0%, #0a5cad 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.65rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 10px 18px rgba(12, 113, 207, 0.24);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btnSave span {
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.btnSave:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 22px rgba(12, 113, 207, 0.28);
+    filter: brightness(1.03);
+}
+
+.btnSave:active {
+    transform: translateY(0);
+}

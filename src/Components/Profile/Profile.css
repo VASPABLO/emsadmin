@@ -1,0 +1,75 @@
+.profileContain{
+    padding: 10px 5%;
+    background-color: var(--blanco);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 9900000000!important;
+    
+}
+.profileContain img{
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: 100%;
+    margin-top: -3rem;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.127);
+    background-color: var(--blanco);
+}
+.profileContain h2{
+    font-weight: 500;
+    color: var(--text-color2);
+}
+/* Modernización botón flotante WhatsApp */
+.socials {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+}
+.socials a {
+    color: #fff;
+    background: linear-gradient(135deg, #25d366 60%, #128c7e 100%);
+    font-size: 2.1rem;
+    border-radius: 50%;
+    width: 3.3rem;
+    height: 3.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(37,211,102,0.18);
+    position: fixed;
+    right: 1.2rem;
+    bottom: 5.5rem;
+    z-index: 1200;
+    transition: box-shadow 0.2s, transform 0.18s, background 0.2s;
+    border: 2.5px solid #fff;
+    outline: 2px solid #25d36622;
+}
+.socials a:hover {
+    background: linear-gradient(135deg, #128c7e 60%, #25d366 100%);
+    box-shadow: 0 8px 32px rgba(37,211,102,0.28);
+    transform: scale(1.08) translateY(-2px);
+}
+.profileText{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+}
+.profileText a{
+    color: var(--text-color2);
+    border-bottom: 1px solid var(--gris2);
+    padding-bottom: 10px;
+}
+@media (max-width: 700px) {
+    .profileContain{
+        padding: 10px 7%;
+    }
+    .socials a {
+        right: 1.1rem;
+        bottom: 4.5rem;
+        width: 3.1rem;
+        height: 3.1rem;
+        font-size: 1.7rem;
+    }
+}
