@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './InfoUserMain.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import { Link as Anchor } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserShield, faEnvelope, faUserTag } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +11,7 @@ export default function InfoUserMain() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${baseURL}/userLogued.php`)
+        apiFetch(`${baseURL}/auth/userLogued.php`)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

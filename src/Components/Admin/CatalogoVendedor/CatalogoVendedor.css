@@ -1,0 +1,854 @@
+/* Catálogo a pantalla completa (sin columna fija del pedido) — pensado primero
+   para teléfono. El pedido/carrito vive aparte, en una hoja que se abre encima
+   (ver .catalogoVendedor__sheet más abajo), no como panel siempre visible. */
+.catalogoVendedor__page {
+    width: 100%;
+    /* Deja aire abajo para que la barra flotante del carrito no tape el último producto */
+    padding-bottom: 5.5rem;
+}
+
+.catalogoVendedor__catalogo,
+.catalogoVendedor__pedido {
+    background: var(--dash-card-bg, #fff);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--dash-card-border, rgba(15, 23, 42, 0.08));
+    border-radius: var(--dash-radius-lg, 20px);
+    padding: 1.1rem;
+    box-shadow: var(--dash-card-shadow, 0 14px 30px rgba(15, 23, 42, 0.06));
+}
+
+.catalogoVendedor__catalogo h3,
+.catalogoVendedor__pedido h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+/* Hero + filtros, estilo del catálogo público (Home/Products.css), pero escalado
+   para vivir dentro del panel del vendedor en vez de ocupar toda la página. */
+.catalogoVendedor__hero {
+    background:
+        radial-gradient(circle at top left, rgba(12, 113, 207, 0.08), transparent 55%),
+        linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: 18px;
+    padding: 1.3rem 1.4rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.catalogoVendedor__heroBadge {
+    width: fit-content;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(12, 113, 207, 0.1);
+    border: 1px solid rgba(12, 113, 207, 0.16);
+    color: #0c71cf;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.catalogoVendedor__hero h2 {
+    margin: 0;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    letter-spacing: -0.02em;
+}
+
+.catalogoVendedor__hero p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.catalogoVendedor__filtros {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(15, 23, 42, 0.07);
+    border-radius: 18px;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.catalogoVendedor__filtrosHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.catalogoVendedor__filtrosTitle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.92rem;
+}
+
+.catalogoVendedor__clearBtn {
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #334155;
+    padding: 0.5rem 0.8rem;
+    border-radius: 11px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 700;
+    font-size: 0.82rem;
+    transition: all 0.2s ease;
+}
+
+.catalogoVendedor__clearBtn:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.catalogoVendedor__search {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #fff;
+    border-radius: 14px;
+    padding: 0 0.9rem;
+    min-height: 48px;
+    margin-bottom: 0.8rem;
+}
+
+.catalogoVendedor__searchIcon {
+    color: #64748b;
+    font-size: 0.86rem;
+}
+
+.catalogoVendedor__search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0f172a;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.catalogoVendedor__search input::placeholder {
+    color: #94a3b8;
+}
+
+.catalogoVendedor__filterField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.catalogoVendedor__filterField span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.catalogoVendedor__filterField select {
+    width: 100%;
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #fff;
+    padding: 0 0.85rem;
+    outline: none;
+    color: #0f172a;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.catalogoVendedor__filterField select:focus,
+.catalogoVendedor__search:focus-within {
+    border-color: #0c71cf;
+    box-shadow: 0 0 0 3px rgba(12, 113, 207, 0.14);
+}
+
+.catalogoVendedor__resultsBar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0.1rem 0.8rem;
+}
+
+.catalogoVendedor__resultsBar h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.catalogoVendedor__resultsBar p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.84rem;
+}
+
+.catalogoVendedor__emptyProducts {
+    grid-column: 1 / -1;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.07);
+    border-radius: 18px;
+    padding: 1.8rem;
+    text-align: center;
+}
+
+.catalogoVendedor__emptyProducts h3 {
+    margin: 0 0 0.5rem;
+    color: #0f172a;
+}
+
+.catalogoVendedor__emptyProducts p {
+    margin: 0 0 1rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.catalogoVendedor__emptyProducts button {
+    border: none;
+    background: #0f172a;
+    color: #fff;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Catálogo: mismas tarjetas grandes que la vista pública de inicio (.cardProductSelected,
+   definido en Products.css: imagen alta, tarjeta blanca redondeada, título + descripción),
+   con controles propios del vendedor (precio, stock, cantidad, agregar) en vez del link
+   "Ver producto". */
+.catalogoVendedor__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.4rem;
+    padding: 0.2rem;
+}
+
+.catalogoVendedor__card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.catalogoVendedor__card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.14);
+}
+
+.catalogoVendedor__cardImage {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #eef3f9;
+}
+
+.catalogoVendedor__cardImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s ease;
+}
+
+.catalogoVendedor__card:hover .catalogoVendedor__cardImage img {
+    transform: scale(1.05);
+}
+
+.catalogoVendedor__cardImagePlaceholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: #f1f5f9;
+}
+
+.catalogoVendedor__cardBadge {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #0f172a;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+}
+
+.catalogoVendedor__cardBody {
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.catalogoVendedor__cardBody h4 {
+    margin: 0 0 0.5rem;
+    color: #172033;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.catalogoVendedor__cardDesc {
+    margin: 0 0 0.9rem;
+    color: #657189;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.7rem;
+}
+
+.catalogoVendedor__vendorRow {
+    margin-top: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.catalogoVendedor__priceArea {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.catalogoVendedor__precio {
+    color: #0f172a;
+    font-size: 1.02rem;
+    font-weight: 800;
+}
+
+.catalogoVendedor__rango {
+    color: #0c71cf;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.catalogoVendedor__stock {
+    font-size: 0.76rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.catalogoVendedor__stock--agotado {
+    color: #b91c1c;
+    font-weight: 700;
+}
+
+.catalogoVendedor__agregarBtn {
+    background: #0c71cf;
+    color: #fff;
+    border: none;
+    border-radius: 11px;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.catalogoVendedor__agregarBtn:hover:not(:disabled) {
+    background: #0a5cad;
+    transform: translateY(-1px);
+}
+
+.catalogoVendedor__agregarBtn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.catalogoVendedor__vacio {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+/* Barra flotante del carrito: fija abajo, aparece solo cuando hay productos
+   agregados. Al tocarla se "desprende" la hoja del pedido (ver sheet abajo). */
+.catalogoVendedor__fab {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 40;
+    max-width: 520px;
+    margin: 0 auto;
+    background: #0f172a;
+    color: #fff;
+    border: none;
+    border-radius: 18px;
+    padding: 0.85rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.catalogoVendedor__fab:hover {
+    transform: translateY(-2px);
+}
+
+.catalogoVendedor__fabIcon {
+    position: relative;
+    display: inline-flex;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.catalogoVendedor__fabCount {
+    position: absolute;
+    top: -10px;
+    right: -12px;
+    background: #0c71cf;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px #0f172a;
+}
+
+.catalogoVendedor__fabText {
+    flex: 1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.catalogoVendedor__fabTotal {
+    font-size: 1rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Hoja del pedido: overlay oscuro + panel que se desprende desde abajo con el
+   carrito y el formulario del cliente. Pensada primero para teléfono (ocupa
+   casi toda la pantalla); en escritorio queda centrada con ancho máximo. */
+.catalogoVendedor__sheetOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: catalogoVendedorFadeIn 0.2s ease;
+}
+
+@keyframes catalogoVendedorFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes catalogoVendedorSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.catalogoVendedor__sheet {
+    width: 100%;
+    max-width: 560px;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -20px 50px rgba(15, 23, 42, 0.25);
+    animation: catalogoVendedorSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.catalogoVendedor__sheetHandle {
+    width: 42px;
+    height: 4px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    margin: 0 auto 0.9rem;
+}
+
+.catalogoVendedor__ticketHeadRight {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.catalogoVendedor__sheetClose {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: none;
+    background: #f1f5f9;
+    color: #334155;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.catalogoVendedor__sheetClose:hover {
+    background: #e2e8f0;
+}
+
+/* En pantallas de escritorio, en vez de una hoja angosta centrada (que deja
+   mucho espacio gris vacío a los lados), se convierte en un panel lateral
+   pegado al borde derecho, a todo lo alto — como un carrito de checkout. */
+@media (min-width: 640px) {
+    .catalogoVendedor__sheetOverlay {
+        align-items: stretch;
+        justify-content: flex-end;
+    }
+
+    .catalogoVendedor__sheet {
+        width: 440px;
+        max-width: 92vw;
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 22px 0 0 22px;
+        animation: catalogoVendedorSlideInRight 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    /* La manija de "arrastrar" solo tiene sentido en la hoja inferior de móvil */
+    .catalogoVendedor__sheetHandle {
+        display: none;
+    }
+}
+
+@keyframes catalogoVendedorSlideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+/* Panel de pedido (carrito tipo ticket de venta / POS) */
+.catalogoVendedor__ticket {
+    position: relative;
+}
+
+.catalogoVendedor__ticketHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+
+.catalogoVendedor__ticketBadge {
+    background: rgba(12, 113, 207, 0.12);
+    color: #0c71cf;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+}
+
+.catalogoVendedor__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+    max-height: 320px;
+    overflow-y: auto;
+    /* Línea punteada entre artículos, como un ticket de caja */
+    border-top: 1px dashed rgba(15, 23, 42, 0.14);
+    padding-top: 0.6rem;
+}
+
+.catalogoVendedor__item {
+    display: flex;
+    gap: 0.6rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 0.6rem 0.7rem;
+}
+
+.catalogoVendedor__itemImg {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eef2f7;
+}
+
+.catalogoVendedor__itemImg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.catalogoVendedor__itemImgPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.6rem;
+    color: #94a3b8;
+    font-weight: 600;
+    padding: 0.2rem;
+}
+
+.catalogoVendedor__itemBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.catalogoVendedor__itemHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.catalogoVendedor__itemTitulo {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #0f172a;
+}
+
+.catalogoVendedor__itemHead button {
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    color: #b91c1c;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.catalogoVendedor__itemHead button:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.catalogoVendedor__itemRow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    align-items: end;
+}
+
+.catalogoVendedor__stepper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    height: 30px;
+}
+
+.catalogoVendedor__stepper button {
+    width: 26px;
+    height: 100%;
+    flex-shrink: 0;
+    border: none;
+    background: #eef2f7;
+    color: #0f172a;
+    cursor: pointer;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.catalogoVendedor__stepper button:hover:not(:disabled) {
+    background: #dde6ef;
+}
+
+.catalogoVendedor__stepper button:disabled {
+    color: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.catalogoVendedor__stepper input {
+    width: 34px;
+    height: 100%;
+    border: none;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    outline: none;
+    /* Oculta las flechas nativas del input number para que no choquen con el stepper */
+    -moz-appearance: textfield;
+}
+
+.catalogoVendedor__stepper input::-webkit-outer-spin-button,
+.catalogoVendedor__stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.catalogoVendedor__itemField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.catalogoVendedor__itemField span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.catalogoVendedor__itemField input {
+    width: 100%;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.85rem;
+}
+
+.catalogoVendedor__itemField input:focus {
+    border-color: #0c71cf;
+    box-shadow: 0 0 0 2px rgba(12, 113, 207, 0.14);
+}
+
+.catalogoVendedor__itemField input:disabled {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.catalogoVendedor__itemSubtotal {
+    font-weight: 800;
+    color: #15803d;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    padding-bottom: 0.35rem;
+}
+
+.catalogoVendedor__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0.9rem;
+    border-top: 1px dashed rgba(15, 23, 42, 0.18);
+    border-radius: 10px;
+    background: rgba(21, 128, 61, 0.06);
+    margin-bottom: 0.9rem;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.catalogoVendedor__total strong {
+    color: #15803d;
+    font-size: 1.3rem;
+}
+
+.catalogoVendedor__clienteEncontrado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(21, 128, 61, 0.1);
+    color: #15803d;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.5rem 0.7rem;
+    border-radius: 10px;
+    margin-bottom: 0.2rem;
+}
+
+.catalogoVendedor__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.catalogoVendedor__form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.catalogoVendedor__form input,
+.catalogoVendedor__form textarea,
+.catalogoVendedor__form select {
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 11px;
+    background: #f8fafc;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    color: #0f172a;
+}
+
+.catalogoVendedor__form input:focus,
+.catalogoVendedor__form textarea:focus,
+.catalogoVendedor__form select:focus {
+    border-color: #0c71cf;
+    box-shadow: 0 0 0 3px rgba(12, 113, 207, 0.14);
+    background: #fff;
+}
+
+.catalogoVendedor__enviarBtn {
+    width: 100%;
+    background: #0c71cf;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    transition: all 0.2s ease;
+}
+
+.catalogoVendedor__enviarBtn:hover:not(:disabled) {
+    background: #0a5cad;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(12, 113, 207, 0.22);
+}
+
+.catalogoVendedor__enviarBtn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}

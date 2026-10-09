@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faSync, faEye, faArrowUp, faArrowDown, faReceipt } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faSync, faEye, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import './PedidosData.css'
 import 'jspdf-autotable';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import moneda from '../../moneda';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -31,7 +32,7 @@ export default function PedidosData() {
 
 
     const cargarPedidos = () => {
-        fetch(`${baseURL}/pedidoGet.php`, {
+        apiFetch(`${baseURL}/pedidos/pedidoGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -48,13 +49,13 @@ export default function PedidosData() {
             text: '¡No podrás revertir esto!',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#0f172a',
+            confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/pedidoDelete.php?idPedido=${idPedido}`, {
+                apiFetch(`${baseURL}/pedidos/pedidoDelete.php?idPedido=${idPedido}`, {
                     method: 'DELETE',
                 })
                     .then(response => response.json())
@@ -89,7 +90,7 @@ export default function PedidosData() {
             estado: nuevoEstado !== '' ? nuevoEstado : pedido.estado,
         };
 
-        fetch(`${baseURL}/pedidoPut.php?idPedido=${idPedido}`, {
+        apiFetch(`${baseURL}/pedidos/pedidoPut.php?idPedido=${idPedido}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -359,25 +360,24 @@ export default function PedidosData() {
         if (estadoNormalizado === 'entregado') return 'estadoBadge entregado';
         if (estadoNormalizado === 'rechazado') return 'estadoBadge rechazado';
         if (estadoNormalizado === 'pagado') return 'estadoBadge pagado';
+        if (estadoNormalizado === 'en proceso') return 'estadoBadge enProceso';
+        if (estadoNormalizado === 'recibido') return 'estadoBadge recibido';
+        if (estadoNormalizado === 'facturado') return 'estadoBadge facturado';
         return 'estadoBadge';
     };
 
 
     return (
-        <section className='pedidosAdmin'>
+        <div className='pedidosPanel'>
 
             <ToastContainer />
-            <div className='pedidosAdmin__header'>
+            <div className='pedidosHeader'>
                 <div>
-                    <span className='pedidosAdmin__badge'>
-                        <FontAwesomeIcon icon={faReceipt} />
-                        Gestión de pedidos
-                    </span>
-                    <h1>Pedidos</h1>
+                    <h2>Tramite de Pedidos</h2>
                     <p>Administra estados, revisa detalles y exporta resultados en segundos.</p>
                 </div>
 
-                <div className='pedidosAdmin__topbar'>
+                <div className='pedidosStats'>
                     <div className='statCard'>
                         <span>Total</span>
                         <strong>{filtrados.length}</strong>
@@ -419,6 +419,9 @@ export default function PedidosData() {
                             <option value="Rechazado">Rechazado</option>
                             <option value="Pagado">Pagado</option>
                             <option value="Pendiente">Pendiente</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="Recibido">Recibido</option>
+                            <option value="Facturado">Facturado</option>
                         </select>
                     </div>
                     <button className='reload' onClick={recargarProductos}><FontAwesomeIcon icon={faSync} /></button>
@@ -431,15 +434,11 @@ export default function PedidosData() {
             </div>
 
             <div className='table-container pedidosTableWrap'>
-                <div className='tableHeaderLite'>
-                    <h3>Tabla de pedidos</h3>
-                    <p>Consulta, filtra y actualiza el estado de cada pedido.</p>
-                </div>
-
                 <table className='table'>
                     <thead>
                         <tr>
                             <th>Id Pedido</th>
+                            <th>Origen</th>
                             <th>Estado</th>
                             <th>Nombre</th>
                             <th>Email</th>
@@ -455,7 +454,7 @@ export default function PedidosData() {
                         {filtrados.map(item => (
                             <tr key={item.idPedido}>
                                 <td>{item.idPedido}</td>
-
+                                <td>{item.origen === 'interno' ? 'Interno' : 'Web'}</td>
                                 <td>
                                     <span className={getEstadoClass(item?.estado)}>{item?.estado}</span>
                                 </td>
@@ -481,7 +480,7 @@ export default function PedidosData() {
 
                         {filtrados.length === 0 && (
                             <tr>
-                                <td colSpan='10' className='emptyTableCell'>
+                                <td colSpan='11' className='emptyTableCell'>
                                     No hay pedidos con los filtros actuales.
                                 </td>
                             </tr>
@@ -498,12 +497,11 @@ export default function PedidosData() {
                             <div className='deFlexBtnsModal'>
                                 <button
                                     className={selectedSection === 'texto' ? 'selected' : ''}
-                                    type='button'
                                     onClick={() => handleSectionChange('texto')}
                                 >
                                     Pedido
                                 </button>
-                                <button type='button' onClick={handleDownloadPDF} className='texto'>Descargar PDF</button>
+                                <button onClick={handleDownloadPDF} className='texto'>Descargar PDF</button>
                             </div>
 
                             <span className="close" onClick={cerrarModal}>
@@ -595,17 +593,42 @@ export default function PedidosData() {
                                     />
                                 </fieldset>
                                 <fieldset>
+                                    <legend>Origen</legend>
+                                    <input
+                                        value={pedido.origen === 'interno' ? 'Interno (vendedor)' : 'Web'}
+                                        disabled
+                                    />
+                                </fieldset>
+                                <fieldset>
                                     <legend>Estado</legend>
                                     <select
                                         value={nuevoEstado !== '' ? nuevoEstado : pedido.estado}
                                         onChange={(e) => setNuevoEstado(e.target.value)}
                                     >
                                         <option value={pedido.estado}>{pedido.estado}</option>
-                                        <option value="Entregado">Entregado</option>
-                                        <option value="Rechazado">Rechazado</option>
-                                        <option value="Pagado">Pagado</option>
+                                        {pedido.origen === 'interno' ? (
+                                            <>
+                                                <option value="Pendiente">Pendiente</option>
+                                                <option value="En proceso">En proceso</option>
+                                                <option value="Recibido">Recibido</option>
+                                                <option value="Facturado">Facturado</option>
+                                                <option value="Rechazado">Rechazado</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option value="Entregado">Entregado</option>
+                                                <option value="Rechazado">Rechazado</option>
+                                                <option value="Pagado">Pagado</option>
+                                            </>
+                                        )}
                                     </select>
                                 </fieldset>
+                                {pedido.origen === 'interno' && pedido.facturadoAt && (
+                                    <fieldset>
+                                        <legend>Facturado el</legend>
+                                        <input value={pedido.facturadoAt} disabled />
+                                    </fieldset>
+                                )}
 
                             </div>
                             <div className='cardsProductData'>
@@ -622,11 +645,11 @@ export default function PedidosData() {
                                 ))}
                             </div>
 
-                            <button type='button' className='btnPost' onClick={() => handleUpdateText(pedido.idPedido)} >Guardar </button>
+                            <button className='btnPost' onClick={() => handleUpdateText(pedido.idPedido)} >Guardar </button>
                         </div>
                     </div>
                 </div>
             )}
-        </section>
+        </div>
     );
-}
+};

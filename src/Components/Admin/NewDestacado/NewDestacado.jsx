@@ -3,6 +3,7 @@ import './NewDestacado.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
@@ -12,39 +13,6 @@ import {
   faUpload,
   faTrash
 } from '@fortawesome/free-solid-svg-icons';
-
-const buildEndpointCandidates = (fileName) => [
-  new URL(fileName, `${baseURL}/`).toString(),
-  new URL(`public/${fileName}`, `${baseURL}/`).toString(),
-  new URL(`build/${fileName}`, `${baseURL}/`).toString(),
-];
-
-const postFormDataWithFallback = async (fileName, formData) => {
-  for (const endpoint of buildEndpointCandidates(fileName)) {
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        continue;
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        continue;
-      }
-
-      const data = await response.json();
-      return { data, endpoint };
-    } catch (error) {
-      // Continue trying alternative endpoints.
-    }
-  }
-
-  throw new Error(`No se encontró un endpoint válido para ${fileName}`);
-};
 
 export default function NewDestacado({ onCreated }) {
   const [mensaje, setMensaje] = useState('');
@@ -109,7 +77,12 @@ export default function NewDestacado({ onCreated }) {
     setMensaje('Subiendo imagen...');
 
     try {
-      const { data } = await postFormDataWithFallback('destacadosPost.php', formData);
+      const response = await apiFetch(`${baseURL}/destacados/destacadosPost.php`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
 
       if (data.mensaje) {
         setMensaje('');

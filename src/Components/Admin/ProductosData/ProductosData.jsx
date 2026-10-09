@@ -18,6 +18,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import NewProduct from '../NewProduct/NewProduct';
 import { Link as Anchor } from "react-router-dom";
 
@@ -27,6 +28,13 @@ export default function ProductosData() {
     const [nuevoTitulo, setNuevoTitulo] = useState('');
     const [nuevaDescripcion, setNuevaDescripcion] = useState('');
     const [nuevoPrecioAnterior, setNuevoPrecioAnterior] = useState(0);
+    const [nuevoPrecio, setNuevoPrecio] = useState('');
+    const [nuevoPrecioMinimo, setNuevoPrecioMinimo] = useState('');
+    const [nuevoPrecioMaximo, setNuevoPrecioMaximo] = useState('');
+    const [nuevoCosto, setNuevoCosto] = useState('');
+    const [nuevoStock, setNuevoStock] = useState('');
+    const [nuevoStockMinimo, setNuevoStockMinimo] = useState('');
+    const [nuevoStockMaximo, setNuevoStockMaximo] = useState('');
     const [nuevaCategoria, setNuevaCategoria] = useState('');
     const [producto, setProducto] = useState({});
     const [modalImagenVisible, setModalImagenVisible] = useState(false);
@@ -40,15 +48,6 @@ export default function ProductosData() {
     const [nuevaImagen, setNuevaImagen] = useState(null);
     const [selectedSection, setSelectedSection] = useState('texto');
     const [categorias, setCategoras] = useState([]);
-
-    const limpiarPreviewImagen = () => {
-        if (imagenPreview) {
-            URL.revokeObjectURL(imagenPreview);
-        }
-
-        setImagenPreview(null);
-        setNuevaImagen(null);
-    };
 
     const cerrarModalImagen = () => {
         setModalImagenVisible(false);
@@ -71,10 +70,17 @@ export default function ProductosData() {
         setNuevaDescripcion(producto.descripcion);
         setNuevaCategoria(producto.idCategoria)
         setNuevoPrecioAnterior(producto.precioAnterior)
+        setNuevoPrecio(producto.precio ?? '');
+        setNuevoPrecioMinimo(producto.precioMinimo ?? '');
+        setNuevoPrecioMaximo(producto.precioMaximo ?? '');
+        setNuevoCosto(producto.costo ?? '');
+        setNuevoStock(producto.stock ?? '');
+        setNuevoStockMinimo(producto.stockMinimo ?? '');
+        setNuevoStockMaximo(producto.stockMaximo ?? '');
     }, [producto]);
 
     const cargarProductos = () => {
-        fetch(`${baseURL}/productosGet.php`, {
+        apiFetch(`${baseURL}/productos/productosGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -91,13 +97,13 @@ export default function ProductosData() {
             text: '¡No podrás revertir esto!',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#0f172a',
+            confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/productDelete.php?idProducto=${idProducto}`, {
+                apiFetch(`${baseURL}/productos/productDelete.php?idProducto=${idProducto}`, {
                     method: 'DELETE',
                 })
                     .then(response => response.json())
@@ -118,18 +124,14 @@ export default function ProductosData() {
     };
 
     const abrirModal = (item) => {
-        limpiarPreviewImagen();
         setProducto(item);
         setNuevoTitulo(item.titulo);
         setNuevaDescripcion(item.descripcion);
         setNuevaCategoria(item.idCategoria);
-        setSelectedSection('texto');
         setModalVisible(true);
     };
 
     const cerrarModal = () => {
-        limpiarPreviewImagen();
-        setSelectedSection('texto');
         setModalVisible(false);
     };
 
@@ -207,7 +209,13 @@ export default function ProductosData() {
 
             nuevoTitulo: nuevoTitulo !== '' ? nuevoTitulo : producto.titulo,
             nuevaDescripcion: nuevaDescripcion !== undefined ? nuevaDescripcion : producto.descripcion,
-            nuevoPrecio: producto.precio,
+            nuevoPrecio: nuevoPrecio !== '' ? nuevoPrecio : producto.precio,
+            nuevoPrecioMinimo: nuevoPrecioMinimo !== '' ? nuevoPrecioMinimo : producto.precioMinimo,
+            nuevoPrecioMaximo: nuevoPrecioMaximo !== '' ? nuevoPrecioMaximo : producto.precioMaximo,
+            nuevoCosto: nuevoCosto !== '' ? nuevoCosto : producto.costo,
+            nuevoStock: nuevoStock !== '' ? nuevoStock : producto.stock,
+            nuevoStockMinimo: nuevoStockMinimo !== '' ? nuevoStockMinimo : producto.stockMinimo,
+            nuevoStockMaximo: nuevoStockMaximo !== '' ? nuevoStockMaximo : producto.stockMaximo,
             nuevaCategoria: nuevaCategoria !== '' ? nuevaCategoria : producto.idCategoria,
             item1: producto.item1,
             item2: producto.item2,
@@ -222,7 +230,7 @@ export default function ProductosData() {
             precioAnterior: nuevoPrecioAnterior !== 0 ? nuevoPrecioAnterior : producto.precioAnterior,
         };
 
-        fetch(`${baseURL}/productoTextPut.php?idProducto=${idProducto}`, {
+        apiFetch(`${baseURL}/productos/productoTextPut.php?idProducto=${idProducto}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -258,10 +266,6 @@ export default function ProductosData() {
         const file = event.target.files[0];
 
         if (file) {
-            if (imagenPreview) {
-                URL.revokeObjectURL(imagenPreview);
-            }
-
             // Crear una URL de objeto para la imagen seleccionada
             const previewURL = URL.createObjectURL(file);
             setFile(file);
@@ -269,11 +273,6 @@ export default function ProductosData() {
         }
     };
     const handleEditarImagenBanner = (idProducto) => {
-        if (!nuevaImagen) {
-            toast.error('Selecciona una imagen antes de guardar.');
-            return;
-        }
-
         const formData = new FormData();
         formData.append('idProducto', idProducto);
         formData.append('updateAction', 'update'); // Campo adicional para indicar que es una actualización
@@ -282,7 +281,7 @@ export default function ProductosData() {
             formData.append('imagen1', nuevaImagen);
         }
 
-        fetch(`${baseURL}/productoImagePut.php`, {
+        apiFetch(`${baseURL}/productos/productoImagePut.php`, {
             method: 'POST',  // Cambiado a POST
             body: formData
         })
@@ -303,7 +302,8 @@ export default function ProductosData() {
 
                     toast.success(data.mensaje);
                     cargarProductos();
-                    limpiarPreviewImagen();
+                    setNuevaImagen(null);
+                    setImagenPreview(null);
                 }
             })
             .catch(error => {
@@ -321,7 +321,7 @@ export default function ProductosData() {
 
 
     const cargarCategoria = () => {
-        fetch(`${baseURL}/categoriasGet.php`, {
+        apiFetch(`${baseURL}/categorias/categoriasGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -455,6 +455,10 @@ export default function ProductosData() {
                                         type="text"
                                         value={nuevoTitulo !== '' ? nuevoTitulo : producto.titulo}
                                         onChange={(e) => setNuevoTitulo(e.target.value)}
+                                        autoComplete='off'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
                                     />
                                 </fieldset>
                                 <fieldset id='descripcion'>
@@ -463,6 +467,10 @@ export default function ProductosData() {
                                         type="text"
                                         value={nuevaDescripcion}
                                         onChange={(e) => setNuevaDescripcion(e.target.value)}
+                                        autoComplete='off'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
                                     />
                                 </fieldset>
 
@@ -489,53 +497,105 @@ export default function ProductosData() {
                                         onChange={(e) => setNuevoPrecioAnterior(e.target.value)}
                                     />
                                 </fieldset>
+
+                                <fieldset>
+                                    <legend>Precio</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoPrecio}
+                                        onChange={(e) => setNuevoPrecio(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Precio mínimo (rango vendedor)</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoPrecioMinimo}
+                                        onChange={(e) => setNuevoPrecioMinimo(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Precio máximo (rango vendedor)</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoPrecioMaximo}
+                                        onChange={(e) => setNuevoPrecioMaximo(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Costo</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoCosto}
+                                        onChange={(e) => setNuevoCosto(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Stock (cantidad en mano)</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoStock}
+                                        onChange={(e) => setNuevoStock(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Stock mínimo</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoStockMinimo}
+                                        onChange={(e) => setNuevoStockMinimo(e.target.value)}
+                                    />
+                                </fieldset>
+
+                                <fieldset>
+                                    <legend>Stock máximo</legend>
+                                    <input
+                                        type="number"
+                                        value={nuevoStockMaximo}
+                                        onChange={(e) => setNuevoStockMaximo(e.target.value)}
+                                    />
+                                </fieldset>
                             </div>
 
 
 
 
-                            <button type='button' className='btnPost' onClick={() => handleUpdateText(producto.idProducto)} >Guardar </button>
+                            <button className='btnPost' onClick={() => handleUpdateText(producto.idProducto)} >Guardar </button>
 
                         </div>
 
                         <div className='sectionImg' style={{ display: selectedSection === 'imagenes' ? 'flex' : 'none' }}>
-                            <div className='previewEditCard'>
-                                <div className='previewEditCard__head'>Vista previa</div>
+                            <div className='previevProduct'>
 
-                                <div className='previevProduct'>
-                                    {imagenPreview ? (
-                                        <img
-                                            src={imagenPreview}
-                                            alt='Vista previa de la imagen'
-                                            onClick={() => abrirModalImagenSeleccionada(imagenPreview)}
-                                        />
-                                    ) : (
-                                        <>
-                                            {producto.imagen1 ? (
-                                                <img
-                                                    src={producto.imagen1}
-                                                    alt='imagen'
-                                                    onClick={() => abrirModalImagenSeleccionada(producto.imagen1)}
-                                                />
-                                            ) : (
-                                                <span className='imgNone'>
-                                                    No hay imagen
-                                                </span>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
+                                {imagenPreview ? (
+                                    <img src={imagenPreview} alt="Vista previa de la imagen" onClick={() => abrirModalImagenSeleccionada(producto.imagen1)} />
+                                ) : (
+                                    <>
+                                        {producto.imagen1 ? (
+                                            <img src={producto.imagen1} alt="imagen" onClick={() => abrirModalImagenSeleccionada(producto.imagen1)} />
+
+                                        ) : (
+                                            <span className='imgNone'>
+                                                No hay imagen
+
+                                            </span>
+                                        )}
+                                    </>
+                                )}
                             </div>
-
                             <fieldset>
                                 <legend>Editar Imagen1 </legend>
-                                <input type='file' accept='image/*' onChange={(e) => handleFileChange(e, setNuevaImagen, setImagenPreview)} />
+                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setNuevaImagen, setImagenPreview)} />
                             </fieldset>
 
-                            <div className='sectionImg__actions'>
-                                <button type='button' className='btnPost' onClick={() => handleEditarImagenBanner(producto.idProducto)}>Guardar </button>
-                                <button type='button' className='btnPost btnPost--ghost' onClick={limpiarPreviewImagen}>Quitar seleccion</button>
-                            </div>
+
+                            <button className='btnPost' onClick={() => handleEditarImagenBanner(producto.idProducto)}>Guardar </button>
+
                         </div>
 
 

@@ -75,6 +75,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
     const [paymentMethod, setPaymentMethod] = useState('efectivo');
     const [deliveryOption, setDeliveryOption] = useState('delivery');
     const [submitMessage, setSubmitMessage] = useState('');
+    const [footerOffset, setFooterOffset] = useState(0);
 
     const modalOpen = typeof isOpen === 'boolean' ? isOpen : internalIsOpen;
 
@@ -93,7 +94,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
     };
 
     const loadProducts = useCallback(() => {
-        fetch(`${baseURL}/productosGet.php`, {
+        fetch(`${baseURL}/productos/productosGet.php`, {
             method: 'GET',
         })
             .then((response) => response.json())
@@ -104,7 +105,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
     }, []);
 
     const loadContact = useCallback(() => {
-        fetch(`${baseURL}/contactoGet.php`, {
+        fetch(`${baseURL}/contacto/contactoGet.php`, {
             method: 'GET',
         })
             .then((response) => response.json())
@@ -177,6 +178,29 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
             window.removeEventListener('storage', handleStorage);
         };
     }, [productsCatalog, hydrateCartWithCatalog]);
+
+    useEffect(() => {
+        const updateFooterOffset = () => {
+            const footerElement = document.querySelector('.footer');
+            if (!footerElement) {
+                setFooterOffset(0);
+                return;
+            }
+
+            const footerRect = footerElement.getBoundingClientRect();
+            const overlap = Math.max(0, window.innerHeight - footerRect.top);
+            setFooterOffset(overlap > 0 ? overlap + 12 : 0);
+        };
+
+        updateFooterOffset();
+        window.addEventListener('scroll', updateFooterOffset, { passive: true });
+        window.addEventListener('resize', updateFooterOffset);
+
+        return () => {
+            window.removeEventListener('scroll', updateFooterOffset);
+            window.removeEventListener('resize', updateFooterOffset);
+        };
+    }, []);
 
     const updateCartAndStorage = (updatedItems) => {
         setCartItems(updatedItems);
@@ -323,7 +347,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
             formData.append('codigo', '');
             formData.append('estado', 'Pendiente');
 
-            const response = await fetch(`${baseURL}/pedidoPost.php`, {
+            const response = await fetch(`${baseURL}/pedidos/pedidoPost.php`, {
                 method: 'POST',
                 body: formData,
             });
@@ -386,6 +410,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
                 <button
                     onClick={openDrawer}
                     className='cartIconFixed'
+                    style={{ '--floating-footer-offset': `${footerOffset}px` }}
                     aria-label='Abrir carrito'
                 >
                     {cartBadgeCount >= 1 && (

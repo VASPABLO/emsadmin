@@ -1,7 +1,7 @@
 .cartIconFixed {
     position: fixed;
     right: 14px;
-    bottom: 72px;
+    bottom: calc(72px + var(--floating-footer-offset, 0px));
     width: 52px;
     height: 52px;
     border: none;
@@ -458,7 +458,7 @@
 
 @media (max-width: 900px) {
     .cartIconFixed {
-        bottom: 92px;
+        bottom: calc(92px + var(--floating-footer-offset, 0px));
         right: 10px;
         width: 58px;
         height: 58px;
@@ -487,7 +487,7 @@
         width: 62px;
         height: 62px;
         right: 8px;
-        bottom: 96px;
+        bottom: calc(96px + var(--floating-footer-offset, 0px));
         font-size: 21px;
     }
 

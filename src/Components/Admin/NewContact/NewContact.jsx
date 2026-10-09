@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './NewContact.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function NewContact({ onCreated }) {
     const [mensaje, setMensaje] = useState('');
@@ -37,7 +38,7 @@ export default function NewContact({ onCreated }) {
         setMensaje('Procesando...');
 
         try {
-            const response = await fetch(`${baseURL}/contactoPost.php`, {
+            const response = await apiFetch(`${baseURL}/contacto/contactoPost.php`, {
                 method: 'POST',
                 body: formData,
             });
@@ -64,7 +65,6 @@ export default function NewContact({ onCreated }) {
 
     return (
         <div className='NewContain'>
-            <ToastContainer />
             <button onClick={toggleModal} className='btnSave newContactBtn'>
                 <span>+</span> Nuevo contacto
             </button>

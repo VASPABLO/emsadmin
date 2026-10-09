@@ -1,65 +1,56 @@
-
-import MainLayout from "../Layouts/MainLayout";
-import { createBrowserRouter } from "react-router-dom";
-import { Navigate } from "react-router-dom";
-import Productos from '../Pages/Productos/Productos'
-import Usuarios from '../Pages/Usuarios/Usuarios'
-import Banners from "./Banners/Banners";
-import Main from "./Main/Main";
-import Contacto from "./Contacto/Contacto";
-import Categorias from "./Categorias/Categorias";
-import Codigos from "./Codigos/Codigos";
+import IndexLayout from "../Layouts/IndexLayout";
+import PagesLayaut from '../Layouts/PagesLayaut';
+import MainLayout from '../Layouts/MainLayout';
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import PageDetail from '../Pages/PageDetail/PageDetail';
 import PageProductos from "./PageProductos/PageProductos";
-import Pedidos from "./Pedidos/Pedidos";
 import Home from "./Home/Home";
-import SobreNosotros from "./Nosotros/Nosotros";
-import Destacados from "./Destacados/Destacados";
+import Nosotros from "./Nosotros/Nosotros";
 import Servicios from "./Servicios/Servicios";
-import ContactoPublico from "./Contacto/Contacto";
-import Demo from "../Pages/Demo/Demo";
-import Login from "../Components/Admin/Login/Login";
-import ProtectedRoute from "../Components/Admin/ProtectedRoute/ProtectedRoute";
-import React, { Suspense } from "react";
-
-const Marcas = React.lazy(() => import('../Pages/Marcas/Marcas'));
+import Contacto from "./Contacto/Contacto";
+import Auth from "../Components/Admin/Auth/Auth";
+import Main from "./Main/Main";
+import Productos from "./Productos/Productos";
+import Pedidos from "./Pedidos/Pedidos";
+import Categorias from "./Categorias/Categorias";
+import Banners from "./Banners/Banners";
+import Destacados from "./Destacados/Destacados";
+import ContactoAdmin from "./Contacto/ContactoAdmin";
+import Usuarios from "./Usuarios/Usuarios";
+import Codigos from "./Codigos/Codigos";
+import NuevoPedido from "./NuevoPedido/NuevoPedido";
+import Reportes from "./Reportes/Reportes";
+import Marcas from "./Marcas/Marcas";
+import RequireRole from "../Components/Admin/RequireRole/RequireRole";
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <Login />,
+        element: <Home />,
     },
     {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/home",
-        element: <ProtectedRoute><Home /></ProtectedRoute>,
+        path: "/inicio",
+        element: <Home />,
     },
     {
         path: "/nosotros",
-        element: <ProtectedRoute><SobreNosotros /></ProtectedRoute>,
+        element: <Nosotros />,
     },
     {
         path: "/servicios",
-        element: <ProtectedRoute><Servicios /></ProtectedRoute>,
-    },
-    {
-        path: "/contacto",
-        element: <ProtectedRoute><ContactoPublico /></ProtectedRoute>,
+        element: <Servicios />,
     },
     {
         path: "/catalogo",
-        element: <ProtectedRoute><Demo /></ProtectedRoute>,
+        element: <IndexLayout />,
     },
     {
-        path: "/producto/:idProducto/:producto",
-        element: <ProtectedRoute><PageDetail /></ProtectedRoute>,
+        path: "/contacto",
+        element: <Contacto />,
     },
     {
-        path: "/productos",
-        element: <ProtectedRoute><PageProductos /></ProtectedRoute>,
+        path: "/login",
+        element: <Auth />,
     },
     {
         path: "/dashboard",
@@ -70,49 +61,71 @@ export const router = createBrowserRouter([
                 element: <Main />,
             },
             {
-                path: `productos`,
-                element: <Productos />,
+                path: "productos",
+                element: <RequireRole roles={['admin']}><Productos /></RequireRole>,
             },
             {
-                path: `usuarios`,
-                element: <Usuarios />,
+                path: "nuevo-pedido",
+                element: <RequireRole roles={['vendedor', 'admin']}><NuevoPedido /></RequireRole>,
             },
             {
-                path: `banners`,
-                element: <Banners />,
+                path: "pedidos",
+                element: <RequireRole roles={['cajera', 'admin']}><Pedidos /></RequireRole>,
             },
             {
-                path: `contacto`,
-                element: <Contacto />,
+                path: "categorias",
+                element: <RequireRole roles={['admin']}><Categorias /></RequireRole>,
             },
             {
-                path: `categorias`,
-                element: <Categorias />,
+                path: "banners",
+                element: <RequireRole roles={['admin']}><Banners /></RequireRole>,
             },
             {
-                path: `codigos`,
-                element: <Codigos />,
+                path: "marcas",
+                element: <RequireRole roles={['admin']}><Marcas /></RequireRole>,
             },
             {
-                path: `pedidos`,
-                element: <Pedidos />,
+                path: "destacados",
+                element: <RequireRole roles={['admin']}><Destacados /></RequireRole>,
             },
-                        {
-                                path: `marcas`,
-                                element: (
-                                    <Suspense fallback={<div>Cargando marcas...</div>}>
-                                        <Marcas />
-                                    </Suspense>
-                                ),
-                        },
             {
-                path: `destacados`,
-                element: <Destacados />,
+                path: "contacto",
+                element: <RequireRole roles={['admin']}><ContactoAdmin /></RequireRole>,
+            },
+            {
+                path: "usuarios",
+                element: <RequireRole roles={['admin']}><Usuarios /></RequireRole>,
+            },
+            {
+                path: "codigos",
+                element: <RequireRole roles={['admin']}><Codigos /></RequireRole>,
+            },
+            {
+                path: "reportes",
+                element: <RequireRole roles={['admin']}><Reportes /></RequireRole>,
             },
         ],
     },
     {
-        path: "*",
-        element: <Navigate to="/login" replace />,
+        path: "/dasboard",
+        element: <Navigate to='/dashboard' replace />,
+    },
+    {
+        path: "/dasboard/*",
+        element: <Navigate to='/dashboard' replace />,
+    },
+    {
+        path: "/",
+        element: <PagesLayaut />,
+        children: [
+            {
+                path: "producto/:idProducto/:producto",
+                element: <PageDetail />,
+            },
+            {
+                path: "productos",
+                element: <PageProductos />,
+            },
+        ]
     },
 ]);

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link as Anchor } from 'react-router-dom';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function InfoUser() {
     const [usuario, setUsuario] = useState(null);
@@ -17,7 +18,7 @@ export default function InfoUser() {
         try {
             setLoading(true);
 
-            const response = await fetch(`${baseURL}/userLogued.php`);
+            const response = await apiFetch(`${baseURL}/auth/userLogued.php`);
 
             if (!response.ok) {
                 throw new Error('No se pudo obtener la información del usuario');

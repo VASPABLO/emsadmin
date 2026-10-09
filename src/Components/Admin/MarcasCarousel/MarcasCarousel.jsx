@@ -7,38 +7,6 @@ import baseURL from '../../url';
 
 SwiperCore.use([Autoplay]);
 
-const buildEndpointCandidates = (fileName) => [
-  new URL(fileName, `${baseURL}/`).toString(),
-  new URL(`public/${fileName}`, `${baseURL}/`).toString(),
-  new URL(`build/${fileName}`, `${baseURL}/`).toString(),
-];
-
-const fetchJsonFromCandidates = async (fileName, options = {}) => {
-  for (const endpoint of buildEndpointCandidates(fileName)) {
-    try {
-      const response = await fetch(endpoint, options);
-      if (!response.ok) {
-        continue;
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        continue;
-      }
-
-      const data = await response.json();
-      if (data?.error) {
-        continue;
-      }
-      return { data, endpoint };
-    } catch (error) {
-      // Continue trying alternative endpoints.
-    }
-  }
-
-  throw new Error(`No se encontró un endpoint válido para ${fileName}`);
-};
-
 export default function MarcasCarousel() {
   const [marcas, setMarcas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,9 +14,10 @@ export default function MarcasCarousel() {
   useEffect(() => {
     const cargarMarcas = async () => {
       try {
-        const { data } = await fetchJsonFromCandidates('marcasGet.php', {
+        const response = await fetch(`${baseURL}/marcas/marcasGet.php`, {
           method: 'GET',
         });
+        const data = await response.json();
         setMarcas(data.marcas || []);
       } catch (error) {
         console.error('Error al cargar marcas:', error);

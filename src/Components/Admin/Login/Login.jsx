@@ -46,41 +46,16 @@ export default function Login() {
             formData.append('contrasena', password);
             formData.append('iniciar_sesion', true);
 
-            let data = null;
-            let resolvedEndpoint = '';
+            const response = await fetch(`${baseURL}/auth/login.php`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
 
-            for (const endpoint of [
-                new URL('login.php', `${baseURL}/`).toString(),
-                new URL('public/login.php', `${baseURL}/`).toString(),
-                new URL('build/login.php', `${baseURL}/`).toString(),
-            ]) {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    continue;
-                }
-
-                const contentType = response.headers.get('content-type') || '';
-                if (!contentType.includes('application/json')) {
-                    continue;
-                }
-
-                data = await response.json();
-                resolvedEndpoint = endpoint;
-                break;
-            }
-
-            if (!data) {
-                throw new Error('No se encontró un endpoint de login válido en producción');
-            }
+            const data = await response.json();
 
             if (data.mensaje) {
                 toast.success(data.mensaje);
-                console.log('Login exitoso en:', resolvedEndpoint);
                 window.dispatchEvent(new Event('auth:changed'));
 
                 setTimeout(() => {

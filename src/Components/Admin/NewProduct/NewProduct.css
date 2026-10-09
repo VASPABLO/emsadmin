@@ -28,22 +28,20 @@
 	background: rgba(2, 6, 23, 0.45);
 	backdrop-filter: blur(4px);
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: center;
 	padding: 1rem;
 	z-index: 1200;
-	overflow-y: auto;
 }
 
 .newProductModal {
 	width: 100%;
 	max-width: 780px;
-	max-height: min(92vh, 900px);
+	max-height: 90vh;
 	background: #ffffff;
 	border-radius: 28px;
 	box-shadow: 0 30px 60px rgba(15, 23, 42, 0.18);
 	overflow-y: auto;
-	margin: auto 0;
 }
 
 .newProductModal::-webkit-scrollbar {
@@ -251,7 +249,7 @@
 .previewCard__imageWrap {
 	width: 100%;
 	min-height: 180px;
-	max-height: clamp(220px, 34vh, 320px);
+	max-height: 280px;
 	background: #f8fafc;
 	overflow: hidden;
 	display: flex;
@@ -294,10 +292,6 @@
 	justify-content: flex-end;
 	gap: 0.8rem;
 	padding-top: 0.3rem;
-	position: sticky;
-	bottom: 0;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, #ffffff 28%);
-	padding-bottom: 0.2rem;
 }
 
 .modalBtn {
@@ -340,10 +334,6 @@
 		max-width: 100%;
 		border-radius: 22px;
 		max-height: 92vh;
-	}
-
-	.newProductModalOverlay {
-		padding: 0.6rem;
 	}
 
 	.newProductForm__grid {

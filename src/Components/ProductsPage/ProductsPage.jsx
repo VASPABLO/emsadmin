@@ -21,7 +21,7 @@ export default function ProductsPage() {
     }, []);
 
     const cargarProductos = () => {
-        fetch(`${baseURL}/productosGet.php`, {
+        fetch(`${baseURL}/productos/productosGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -37,7 +37,7 @@ export default function ProductsPage() {
     };
 
     const cargarCategorias = () => {
-        fetch(`${baseURL}/categoriasGet.php`, {
+        fetch(`${baseURL}/categorias/categoriasGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -222,10 +222,6 @@ export default function ProductsPage() {
                                     ) : (
                                         <div className='productCard__placeholder'>Sin imagen</div>
                                     )}
-
-                                    <div className='productCard__overlay'>
-                                        <span>Ver detalles del producto</span>
-                                    </div>
 
                                     <div className='productCard__badge'>
                                         {obtenerNombreCategoria(item.idCategoria)}

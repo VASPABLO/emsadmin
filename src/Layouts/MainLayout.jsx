@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-
 import Spiner from '../Components/Admin/Spiner/Spiner';
-import { Outlet } from 'react-router-dom';
-import Auth from '../Components/Admin/Auth/Auth';
+import { Navigate, Outlet } from 'react-router-dom';
 import baseURL from '../Components/url';
-import Navbar from '../Components/Navbar/Navbar';
+import { AuthProvider } from '../Context/AuthContext';
+
+const ROLES_CON_ACCESO_DASHBOARD = ['vendedor', 'cajera', 'admin'];
+
 export default function MainLayout() {
     const [usuario, setUsuario] = useState({});
     const [loading, setLoading] = useState(true);
@@ -18,34 +19,12 @@ export default function MainLayout() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                let data = null;
+                const response = await fetch(`${baseURL}/auth/userLogued.php`, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                });
 
-                for (const endpoint of [
-                    new URL('userLogued.php', `${baseURL}/`).toString(),
-                    new URL('public/userLogued.php', `${baseURL}/`).toString(),
-                    new URL('build/userLogued.php', `${baseURL}/`).toString(),
-                ]) {
-                    const response = await fetch(endpoint, {
-                        credentials: 'include',
-                        cache: 'no-store',
-                    });
-
-                    if (!response.ok) {
-                        continue;
-                    }
-
-                    const contentType = response.headers.get('content-type') || '';
-                    if (!contentType.includes('application/json')) {
-                        continue;
-                    }
-
-                    data = await response.json();
-                    break;
-                }
-
-                if (!data) {
-                    throw new Error('No se encontró un endpoint de sesión válido en producción');
-                }
+                const data = await response.json();
 
                 setUsuario(data);
                 setLoading(false);
@@ -71,15 +50,14 @@ export default function MainLayout() {
     if (loading) {
         return <Spiner />;
     }
-    // Si no hay usuario logueado, muestra Auth
-    if (!usuario || !usuario.idUsuario) {
-        return <Auth />;
+    // Bloquea acceso al admin sin sesión activa, o con un rol sin acceso al panel (ej. 'usuario').
+    if (!usuario || !usuario.idUsuario || !ROLES_CON_ACCESO_DASHBOARD.includes(usuario.rol)) {
+        return <Navigate to='/' replace />;
     }
-    // Si hay usuario logueado, muestra el panel admin con Navbar
+    // Si hay usuario logueado con un rol permitido, muestra el panel admin
     return (
-        <div>
-            <Navbar />
+        <AuthProvider usuario={usuario}>
             <Outlet />
-        </div>
+        </AuthProvider>
     );
 }

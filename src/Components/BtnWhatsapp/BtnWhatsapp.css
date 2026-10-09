@@ -1,7 +1,7 @@
 .btnWhatsapp {
     position: fixed;
     right: 14px;
-    bottom: 138px;
+    bottom: calc(138px + var(--floating-footer-offset, 0px));
     background: linear-gradient(140deg, #22c55e, #16a34a);
     color: var(--blanco);
     border-radius: 999px;
@@ -132,7 +132,7 @@
 @media (max-width: 900px) {
     .btnWhatsapp {
         right: 10px;
-        bottom: 162px;
+        bottom: calc(162px + var(--floating-footer-offset, 0px));
         width: 58px;
         height: 58px;
     }
@@ -145,7 +145,7 @@
 @media (max-width: 500px) {
     .btnWhatsapp {
         right: 8px;
-        bottom: 172px;
+        bottom: calc(172px + var(--floating-footer-offset, 0px));
         width: 62px;
         height: 62px;
     }

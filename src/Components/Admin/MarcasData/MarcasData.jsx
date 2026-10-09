@@ -11,40 +11,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import './MarcasData.css';
 import NewMarca from '../NewMarca/NewMarca';
-
-const buildEndpointCandidates = (fileName) => [
-  new URL(fileName, `${baseURL}/`).toString(),
-  new URL(`public/${fileName}`, `${baseURL}/`).toString(),
-  new URL(`build/${fileName}`, `${baseURL}/`).toString(),
-];
-
-const fetchJsonFromCandidates = async (fileName, options = {}) => {
-  for (const endpoint of buildEndpointCandidates(fileName)) {
-    try {
-      const response = await fetch(endpoint, options);
-      if (!response.ok) {
-        continue;
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        continue;
-      }
-
-      const data = await response.json();
-      if (data?.error) {
-        continue;
-      }
-      return { data, endpoint };
-    } catch (error) {
-      // Continue trying alternative endpoints.
-    }
-  }
-
-  throw new Error(`No se encontró un endpoint válido para ${fileName}`);
-};
 
 export default function MarcasData() {
   const [marcas, setMarcas] = useState([]);
@@ -57,9 +26,10 @@ export default function MarcasData() {
   const cargarMarcas = async () => {
     setLoading(true);
     try {
-      const { data } = await fetchJsonFromCandidates('marcasGet.php', {
+      const response = await apiFetch(`${baseURL}/marcas/marcasGet.php`, {
         method: 'GET',
       });
+      const data = await response.json();
       setMarcas(data.marcas || []);
     } catch (error) {
       console.error('Error al cargar marcas:', error);
@@ -82,10 +52,11 @@ export default function MarcasData() {
       borderRadius: 18,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetchJsonFromCandidates(`marcaDelete.php?idMarca=${idMarca}`, {
+        apiFetch(`${baseURL}/marcas/marcaDelete.php?idMarca=${idMarca}`, {
           method: 'DELETE',
         })
-          .then(({ data }) => {
+          .then((response) => response.json())
+          .then((data) => {
             if (data.error) {
               toast.error(data.error);
               return;

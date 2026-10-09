@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 import { Link as Anchor } from "react-router-dom";
 export default function Logout() {
@@ -12,7 +13,7 @@ export default function Logout() {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch(`${baseURL}/logout.php`, {
+            const response = await apiFetch(`${baseURL}/auth/logout.php`, {
                 method: 'GET',
             });
 

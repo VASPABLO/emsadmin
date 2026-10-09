@@ -1,29 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faTrash,
-    faEdit,
-    faArrowUp,
-    faArrowDown,
-    faSync,
-    faUsers,
-    faUserShield,
-} from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faArrowUp, faArrowDown, faSync } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Register from '../Register/Register';
-import './UsuariosData.css';
-
 export default function UsuariosData() {
     const [usuarios, setUsuarios] = useState([]);
     const [filtroIdUsuario, setFiltroIdUsuario] = useState('');
     const [filtroNombre, setFiltroNombre] = useState('');
     const [filtroRol, setFiltroRol] = useState('');
+    const [filtroFechaDesde, setFiltroFechaDesde] = useState('');
+    const [filtroFechaHasta, setFiltroFechaHasta] = useState('');
     const [filtroEmail, setFiltroEmail] = useState('');
     const [ordenInvertido, setOrdenInvertido] = useState(false);
 
@@ -32,7 +25,7 @@ export default function UsuariosData() {
     }, []);
 
     const cargarUsuarios = () => {
-        fetch(`${baseURL}/usuariosGet.php`, {
+        apiFetch(`${baseURL}/usuarios/usuariosGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -48,13 +41,13 @@ export default function UsuariosData() {
             text: '¡No podrás revertir esto!',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#0f172a',
+            confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/usuariosGet.php?idUsuario=${idUsuario}`, {
+                apiFetch(`${baseURL}/usuarios/usuariosGet.php?idUsuario=${idUsuario}`, {
                     method: 'DELETE',
                 })
                     .then(response => response.json())
@@ -80,6 +73,8 @@ export default function UsuariosData() {
             input: 'select',
             inputOptions: {
                 'usuario': 'Usuario',
+                'vendedor': 'Vendedor',
+                'cajera': 'Cajera',
                 'admin': 'Admin'
             },
             inputValue: rolActual,
@@ -89,7 +84,7 @@ export default function UsuariosData() {
         }).then((result) => {
             if (result.isConfirmed) {
                 const nuevoRol = result.value;
-                fetch(`${baseURL}/usuariosGet.php?idUsuario=${idUsuario}`, {
+                apiFetch(`${baseURL}/usuarios/usuariosGet.php?idUsuario=${idUsuario}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -117,12 +112,12 @@ export default function UsuariosData() {
         const idUsuarioMatch = usuario.idUsuario.toString().includes(filtroIdUsuario);
         const nombreMatch = usuario.nombre.toLowerCase().includes(filtroNombre.toLowerCase());
         const rolMatch = !filtroRol || usuario.rol.includes(filtroRol);
+        const fechaDesdeMatch = !filtroFechaDesde || new Date(usuario.createdAt) >= new Date(filtroFechaDesde);
+        const fechaHastaMatch = !filtroFechaHasta || new Date(usuario.createdAt) <= new Date(filtroFechaHasta);
         const emailMatch = usuario.email.toLowerCase().includes(filtroEmail.toLowerCase());
 
-        return idUsuarioMatch && nombreMatch && rolMatch && emailMatch;
+        return idUsuarioMatch && nombreMatch && rolMatch && fechaDesdeMatch && fechaHastaMatch && emailMatch;
     });
-
-    const totalAdmins = usuarios.filter((usuario) => usuario?.rol === 'admin').length;
 
     const descargarExcel = () => {
         const data = usuariosFiltrados.map(usuarios => ({
@@ -174,81 +169,54 @@ export default function UsuariosData() {
         setUsuarios([...usuarios].reverse());
         setOrdenInvertido(!ordenInvertido);
     };
-
     return (
-        <section className='usuariosAdmin'>
-            <ToastContainer />
-
-            <div className='usuariosAdmin__header'>
-                <div>
-                    <span className='usuariosAdmin__badge'>
-                        <FontAwesomeIcon icon={faUsers} />
-                        Gestión de usuarios
-                    </span>
-                    <h1>Usuarios</h1>
-                    <p>Administra roles, filtra cuentas y mantén control del acceso al panel.</p>
-                </div>
-
-                <div className='usuariosAdmin__actions'>
+        <div>
+            <div className='deFlexContent'>
+                <div className='deFlex2'>
                     <Register />
                     <button className='excel' onClick={descargarExcel}><FontAwesomeIcon icon={faArrowDown} /> Excel</button>
                     <button className='pdf' onClick={descargarPDF}><FontAwesomeIcon icon={faArrowDown} /> PDF</button>
-                    <button className='reload' onClick={recargarUsuarios}><FontAwesomeIcon icon={faSync} /> Recargar</button>
+
+                </div>
+
+
+                <div className='filtrosContain'>
+                    <div className='inputsColumn'>
+
+                        <input type="number" value={filtroIdUsuario} onChange={(e) => setFiltroIdUsuario(e.target.value)} placeholder='ID Usuario' />
+                    </div>
+
+                    <div className='inputsColumn'>
+
+                        <input type="text" value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)} placeholder='Nombre' />
+                    </div>
+                    <div className='inputsColumn'>
+
+                        <input type="text" value={filtroEmail} onChange={(e) => setFiltroEmail(e.target.value)} placeholder='Email' />
+                    </div>
+                    <div className='inputsColumn'>
+
+                        <select value={filtroRol} onChange={(e) => setFiltroRol(e.target.value)}>
+                            <option value="">Todos</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="vendedor">Vendedor</option>
+                            <option value="cajera">Cajera</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <button className='reload' onClick={recargarUsuarios}><FontAwesomeIcon icon={faSync} /></button>
+                    <button className='reverse' onClick={invertirOrden}>
+                        {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
+                    </button>
+
+
                 </div>
             </div>
 
-            <div className='usuariosAdmin__topbar'>
-                <div className='statCard'>
-                    <span>Total usuarios</span>
-                    <strong>{usuarios.length}</strong>
-                </div>
-
-                <div className='statCard'>
-                    <span>Filtrados</span>
-                    <strong>{usuariosFiltrados.length}</strong>
-                </div>
-
-                <div className='statCard'>
-                    <span>Administradores</span>
-                    <strong>{totalAdmins}</strong>
-                </div>
-            </div>
-
-            <div className='filtrosContain'>
-                <div className='inputsColumn'>
-                    <label>ID</label>
-                    <input type='number' value={filtroIdUsuario} onChange={(e) => setFiltroIdUsuario(e.target.value)} placeholder='ID Usuario' />
-                </div>
-
-                <div className='inputsColumn'>
-                    <label>Nombre</label>
-                    <input type='text' value={filtroNombre} onChange={(e) => setFiltroNombre(e.target.value)} placeholder='Nombre' />
-                </div>
-
-                <div className='inputsColumn'>
-                    <label>Email</label>
-                    <input type='text' value={filtroEmail} onChange={(e) => setFiltroEmail(e.target.value)} placeholder='Email' />
-                </div>
-
-                <div className='inputsColumn'>
-                    <label>Rol</label>
-                    <select value={filtroRol} onChange={(e) => setFiltroRol(e.target.value)}>
-                        <option value=''>Todos</option>
-                        <option value='usuario'>Usuario</option>
-                        <option value='admin'>Admin</option>
-                    </select>
-                </div>
-
-                <button className='reverse' onClick={invertirOrden}>
-                    {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />} Orden
-                </button>
-            </div>
 
             <div className='table-container'>
-                <div className='tableHeaderLite'>
-                    <h3><FontAwesomeIcon icon={faUserShield} /> Tabla de usuarios</h3>
-                    <p>Edita roles o elimina cuentas según sea necesario.</p>
-                </div>
+                <ToastContainer />
 
                 <table className='table'>
                     <thead>
@@ -262,13 +230,17 @@ export default function UsuariosData() {
                         </tr>
                     </thead>
                     <tbody>
-                        {usuariosFiltrados.map((usuario) => (
+                        {usuariosFiltrados.map(usuario => (
                             <tr key={usuario.idUsuario}>
                                 <td>{usuario.idUsuario}</td>
                                 <td>{usuario.nombre}</td>
                                 <td>{usuario.email}</td>
                                 <td style={{
-                                    color: usuario?.rol === 'usuario' ? '#DAA520' : usuario?.rol === 'admin' ? '#008000' : '#FF0000',
+                                    color: usuario?.rol === 'usuario' ? '#DAA520'
+                                        : usuario?.rol === 'admin' ? '#008000'
+                                        : usuario?.rol === 'vendedor' ? '#1E90FF'
+                                        : usuario?.rol === 'cajera' ? '#9932CC'
+                                        : '#FF0000',
 
                                 }}>  {`${usuario?.rol}`}</td>
                                 <td>{usuario.createdAt}</td>
@@ -280,16 +252,10 @@ export default function UsuariosData() {
                                 </td>
                             </tr>
                         ))}
-
-                        {usuariosFiltrados.length === 0 && (
-                            <tr>
-                                <td colSpan='6' className='emptyTableCell'>No hay usuarios con los filtros actuales.</td>
-                            </tr>
-                        )}
                     </tbody>
 
                 </table>
             </div>
-        </section>
+        </div>
     );
 };

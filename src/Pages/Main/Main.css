@@ -2,7 +2,8 @@
     display: flex;
 }
 
-.dashboardMain {
+.dashboardMain,
+.containerSection {
     --dash-card-bg: rgba(255, 255, 255, 0.9);
     --dash-card-border: rgba(15, 23, 42, 0.08);
     --dash-card-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
@@ -25,10 +26,12 @@
         linear-gradient(180deg, #f7fafc 0%, #eef2f7 100%);
 }
 
-.dashboardMain__content {
+.dashboardMain__content,
+.containerSection > .container {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+    animation: dashFadeUp 0.4s ease both;
 }
 
 .dashboardMain__row {
@@ -51,7 +54,8 @@
         flex-direction: column;
     }
 
-    .dashboardMain {
+    .dashboardMain,
+    .containerSection {
         height: auto;
         min-height: 100vh;
         padding: 1rem;
