@@ -69,8 +69,15 @@ try {
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )";
     crearTablaSiNoExiste($conexion, 'destacados', $consultaDestacados);
+    $consultaMarcas = "CREATE TABLE IF NOT EXISTS `marcas` (
+        idMarca INT(11) AUTO_INCREMENT PRIMARY KEY,
+        imagen VARCHAR(900) NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )";
+    crearTablaSiNoExiste($conexion, 'marcas', $consultaMarcas);
 
-    // Crear tabla 'productos' si no existe
+        // Crear tabla 'productos' si no existe
+
     $consultaProductos = "CREATE TABLE IF NOT EXISTS `productos` (
         idProducto INT(11) AUTO_INCREMENT PRIMARY KEY,
         descripcion TEXT NOT NULL,

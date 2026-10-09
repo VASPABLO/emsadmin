@@ -215,6 +215,11 @@ export default function Navbar() {
               <span>Contacto</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </Anchor>
+            {/* Solo visible para admin, puedes agregar lógica de permisos si lo deseas */}
+            <Anchor to="/dashboard/marcas" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
+              <span>Marcas</span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </Anchor>
 
             <button
               type="button"

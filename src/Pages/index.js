@@ -1,3 +1,4 @@
+
 import MainLayout from "../Layouts/MainLayout";
 import { createBrowserRouter } from "react-router-dom";
 import { Navigate } from "react-router-dom";
@@ -19,6 +20,9 @@ import ContactoPublico from "./Contacto/Contacto";
 import Demo from "../Pages/Demo/Demo";
 import Login from "../Components/Admin/Login/Login";
 import ProtectedRoute from "../Components/Admin/ProtectedRoute/ProtectedRoute";
+import React, { Suspense } from "react";
+
+const Marcas = React.lazy(() => import('../Pages/Marcas/Marcas'));
 
 export const router = createBrowserRouter([
     {
@@ -94,6 +98,14 @@ export const router = createBrowserRouter([
                 element: <Pedidos />,
             },
                         {
+                                path: `marcas`,
+                                element: (
+                                    <Suspense fallback={<div>Cargando marcas...</div>}>
+                                        <Marcas />
+                                    </Suspense>
+                                ),
+                        },
+            {
                 path: `destacados`,
                 element: <Destacados />,
             },

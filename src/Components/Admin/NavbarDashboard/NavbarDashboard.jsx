@@ -30,6 +30,7 @@ export default function Navbar() {
         { to: '/dashboard/pedidos', label: 'Pedidos', icon: faClipboardList },
         { to: '/dashboard/categorias', label: 'Categorías', icon: faLayerGroup },
         { to: '/dashboard/banners', label: 'Banners', icon: faImage },
+        { to: '/dashboard/marcas', label: 'Marcas', icon: faStar },
         { to: '/dashboard/destacados', label: 'Destacados', icon: faStar },
         { to: '/dashboard/contacto', label: 'Contacto', icon: faAddressBook },
         { to: '/dashboard/usuarios', label: 'Usuarios', icon: faUser },

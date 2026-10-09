@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
 import Spiner from '../Components/Admin/Spiner/Spiner';
 import { Outlet } from 'react-router-dom';
 import Auth from '../Components/Admin/Auth/Auth';
 import baseURL from '../Components/url';
+import Navbar from '../Components/Navbar/Navbar';
 export default function MainLayout() {
     const [usuario, setUsuario] = useState({});
     const [loading, setLoading] = useState(true);
@@ -73,9 +75,10 @@ export default function MainLayout() {
     if (!usuario || !usuario.idUsuario) {
         return <Auth />;
     }
-    // Si hay usuario logueado, muestra el panel admin
+    // Si hay usuario logueado, muestra el panel admin con Navbar
     return (
         <div>
+            <Navbar />
             <Outlet />
         </div>
     );

@@ -2,7 +2,7 @@
 const baseURL = (
 	process.env.REACT_APP_API_BASE_URL ||
 	process.env.REACT_APP_API_URL ||
-	(typeof window !== 'undefined' ? window.location.origin : '')
+	'https://admin.emscrsoluciones.com'
 ).replace(/\/$/, '');
 
 export default baseURL;
