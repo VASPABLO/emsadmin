@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import './Register.css'
 
 export default function Register() {
@@ -32,7 +33,7 @@ export default function Register() {
             formData.append('rol', rol);
             formData.append('contrasena', contrasena);
 
-            const response = await fetch(`${baseURL}/registroPost.php`, {
+            const response = await apiFetch(`${baseURL}/auth/registroPost.php`, {
                 method: 'POST',
                 body: formData,
             });
@@ -64,7 +65,6 @@ export default function Register() {
 
     return (
         <div >
-            <ToastContainer />
             <button onClick={toggleModal} className='btnSave'>
                 <span>  +</span>   Agregar
             </button>
@@ -114,6 +114,8 @@ export default function Register() {
                                     >
                                         <option value="">Seleccione un rol</option>
                                         <option value="usuario">Usuario</option>
+                                        <option value="vendedor">Vendedor</option>
+                                        <option value="cajera">Cajera</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </fieldset>

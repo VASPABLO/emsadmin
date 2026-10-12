@@ -1,0 +1,95 @@
+.panelGanancias {
+    background: var(--dash-card-bg, #fff);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--dash-card-border, rgba(15, 23, 42, 0.08));
+    border-radius: var(--dash-radius-lg, 20px);
+    box-shadow: var(--dash-card-shadow, 0 14px 30px rgba(15, 23, 42, 0.06));
+    padding: 1.2rem;
+}
+
+.panelGanancias__header h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.panelGanancias__header p {
+    margin: 0.3rem 0 0;
+    color: #64748b;
+    font-size: 0.86rem;
+}
+
+.panelGanancias__cargando,
+.panelGanancias__vacio {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+}
+
+.panelGanancias__resumen {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin: 1rem 0 1.2rem;
+}
+
+.panelGanancias__statPrincipal,
+.panelGanancias__statSecundario {
+    border-radius: 14px;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.panelGanancias__statPrincipal span,
+.panelGanancias__statSecundario span {
+    display: block;
+    color: #64748b;
+    font-size: 0.76rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.panelGanancias__statPrincipal strong {
+    color: #15803d;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.panelGanancias__statSecundario strong {
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.panelGanancias__chartWrap {
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+}
+
+.panelGanancias__chart {
+    display: block;
+}
+
+.panelGanancias__tooltip {
+    background: #0f172a;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.78rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    box-shadow: 0 10px 20px rgba(2, 6, 23, 0.28);
+}
+
+.panelGanancias__tooltip strong {
+    color: #86efac;
+}
+
+@media (max-width: 700px) {
+    .panelGanancias__resumen {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

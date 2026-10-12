@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import './BannerData.css';
 import NewBanner from '../NewBanner/NewBanner';
 
@@ -24,7 +25,7 @@ export default function BannerData() {
 
     const cargarBanners = () => {
         setLoading(true);
-        fetch(`${baseURL}/bannersGet.php`, {
+        apiFetch(`${baseURL}/banners/bannersGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -51,7 +52,7 @@ export default function BannerData() {
             borderRadius: 18,
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/bannerDelete.php?idBanner=${idBanner}`, {
+                apiFetch(`${baseURL}/banners/bannerDelete.php?idBanner=${idBanner}`, {
                     method: 'DELETE',
                 })
                     .then(response => response.json())

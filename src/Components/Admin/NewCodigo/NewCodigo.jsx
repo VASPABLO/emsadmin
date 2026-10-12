@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './NewCodigo.css';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function NewCodigo() {
     const [mensaje, setMensaje] = useState('');
@@ -36,7 +37,7 @@ export default function NewCodigo() {
         setMensaje('Procesando...');
 
         try {
-            const response = await fetch(`${baseURL}/codigosPost.php`, {
+            const response = await apiFetch(`${baseURL}/codigos/codigosPost.php`, {
                 method: 'POST',
                 body: formData,
             });
@@ -60,7 +61,6 @@ export default function NewCodigo() {
     };
     return (
         <div className='NewContain'>
-            <ToastContainer />
             <button onClick={toggleModal} className='btnSave'>
                 <span>+</span> Agregar
             </button>

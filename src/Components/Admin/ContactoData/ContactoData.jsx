@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faAddressBook, faSync, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import './ContactoData.css';
 import 'jspdf-autotable';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import NewContact from '../NewContact/NewContact';
 
 export default function ContactoData() {
@@ -20,7 +21,7 @@ export default function ContactoData() {
     }, []);
 
     const cargarContacto = () => {
-        fetch(`${baseURL}/contactoGet.php`, {
+        apiFetch(`${baseURL}/contacto/contactoGet.php`, {
             method: 'GET',
         })
             .then((response) => response.json())
@@ -42,7 +43,7 @@ export default function ContactoData() {
             cancelButtonText: 'Cancelar',
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/contactoDelete.php?idContacto=${idContacto}`, {
+                apiFetch(`${baseURL}/contacto/contactoDelete.php?idContacto=${idContacto}`, {
                     method: 'DELETE',
                 })
                     .then((response) => response.json())
@@ -84,7 +85,7 @@ export default function ContactoData() {
             facebook: contacto.facebook,
         };
 
-        fetch(`${baseURL}/contactoPut.php?idContacto=${idContacto}`, {
+        apiFetch(`${baseURL}/contacto/contactoPut.php?idContacto=${idContacto}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -116,35 +117,10 @@ export default function ContactoData() {
     };
 
     return (
-        <section className='contactoAdmin'>
+        <div>
             <ToastContainer />
 
             <NewContact onCreated={cargarContacto} />
-
-            <div className='contactoAdmin__header'>
-                <div>
-                    <span className='contactoAdmin__badge'>
-                        <FontAwesomeIcon icon={faAddressBook} />
-                        Gestión de contacto
-                    </span>
-                    <h1>Contacto</h1>
-                    <p>Actualiza los canales de contacto visibles en la tienda y WhatsApp.</p>
-                </div>
-
-                <div className='contactoAdmin__actions'>
-                    <button className='adminActionBtn adminActionBtn--ghost' onClick={cargarContacto}>
-                        <FontAwesomeIcon icon={faSync} />
-                        Recargar
-                    </button>
-                </div>
-            </div>
-
-            <div className='contactoAdmin__topbar'>
-                <div className='statCard'>
-                    <span>Total contactos</span>
-                    <strong>{contactos.length}</strong>
-                </div>
-            </div>
 
             {modalVisible && (
                 <div className='modal'>
@@ -170,18 +146,13 @@ export default function ContactoData() {
                                 </fieldset>
                             </div>
 
-                            <button type='button' className='btnPost' onClick={() => handleUpdateText(contacto.idContacto)}>Guardar</button>
+                            <button className='btnPost' onClick={() => handleUpdateText(contacto.idContacto)}>Guardar</button>
                         </div>
                     </div>
                 </div>
             )}
 
             <div className='table-container'>
-                <div className='tableHeaderLite'>
-                    <h3><FontAwesomeIcon icon={faPhoneVolume} /> Tabla de contacto</h3>
-                    <p>Edita los datos y elimina registros obsoletos.</p>
-                </div>
-
                 <table className='table'>
                     <thead>
                         <tr>
@@ -217,15 +188,9 @@ export default function ContactoData() {
                                 </td>
                             </tr>
                         ))}
-
-                        {contactos.length === 0 && (
-                            <tr>
-                                <td colSpan='8' className='emptyTableCell'>No hay contactos registrados.</td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
     );
 }

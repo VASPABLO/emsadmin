@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link as Anchor } from 'react-router-dom';
 import './ProductosMain.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function ProductosMain() {
     const [productos, setProductos] = useState([]);
@@ -17,8 +18,8 @@ export default function ProductosMain() {
 
         try {
             const [productosRes, categoriasRes] = await Promise.all([
-                fetch(`${baseURL}/productosGet.php`),
-                fetch(`${baseURL}/categoriasGet.php`),
+                apiFetch(`${baseURL}/productos/productosGet.php`),
+                apiFetch(`${baseURL}/categorias/categoriasGet.php`),
             ]);
 
             const [productosData, categoriasData] = await Promise.all([

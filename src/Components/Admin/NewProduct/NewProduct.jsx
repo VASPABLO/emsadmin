@@ -3,6 +3,7 @@ import './NewProduct.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus,
@@ -87,7 +88,7 @@ export default function NewProduct({ onCreated }) {
         setMensaje('Creando producto...');
 
         try {
-            const response = await fetch(`${baseURL}/productosPost.php`, {
+            const response = await apiFetch(`${baseURL}/productos/productosPost.php`, {
                 method: 'POST',
                 body: formData,
             });
@@ -128,7 +129,7 @@ export default function NewProduct({ onCreated }) {
 
 
     const cargarCategoria = () => {
-        fetch(`${baseURL}/categoriasGet.php`, {
+        apiFetch(`${baseURL}/categorias/categoriasGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -172,6 +173,10 @@ export default function NewProduct({ onCreated }) {
                                         required
                                         value={titulo}
                                         onChange={(event) => setTitulo(event.target.value)}
+                                        autoComplete='off'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
                                     />
                                 </label>
 
@@ -191,6 +196,41 @@ export default function NewProduct({ onCreated }) {
                                     </select>
                                 </label>
 
+                                <label className='fieldBox'>
+                                    <span>Precio</span>
+                                    <input type='number' id='precio' name='precio' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Precio mínimo (rango que puede cobrar el vendedor)</span>
+                                    <input type='number' id='precioMinimo' name='precioMinimo' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Precio máximo (rango que puede cobrar el vendedor)</span>
+                                    <input type='number' id='precioMaximo' name='precioMaximo' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Costo</span>
+                                    <input type='number' id='costo' name='costo' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Stock (cantidad en mano)</span>
+                                    <input type='number' id='stock' name='stock' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Stock mínimo</span>
+                                    <input type='number' id='stockMinimo' name='stockMinimo' min='0' step='1' />
+                                </label>
+
+                                <label className='fieldBox'>
+                                    <span>Stock máximo</span>
+                                    <input type='number' id='stockMaximo' name='stockMaximo' min='0' step='1' />
+                                </label>
+
                                 <label className='fieldBox fieldBox--full'>
                                     <span>Descripción</span>
                                     <textarea
@@ -200,6 +240,10 @@ export default function NewProduct({ onCreated }) {
                                         value={descripcion}
                                         onChange={(event) => setDescripcion(event.target.value)}
                                         placeholder='Descripción del producto'
+                                        autoComplete='off'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
                                     />
                                 </label>
                             </div>

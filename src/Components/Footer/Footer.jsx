@@ -9,10 +9,10 @@ import {
   faPhone,
   faMapMarkerAlt,
   faArrowRight,
-  faCamera,
   faUsers,
   faCommentDots,
 } from "@fortawesome/free-solid-svg-icons";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 export default function Footer() {
   const [productos, setProductos] = useState([]);
@@ -24,7 +24,7 @@ export default function Footer() {
   }, []);
 
   const cargarProductos = () => {
-    fetch(`${baseURL}/productosGet.php`, { method: "GET" })
+    fetch(`${baseURL}/productos/productosGet.php`, { method: "GET" })
       .then((r) => r.json())
       .then((data) => {
         setProductos((data?.productos || []).slice(0, 4));
@@ -33,7 +33,7 @@ export default function Footer() {
   };
 
   const cargarContacto = () => {
-    fetch(`${baseURL}/contactoGet.php`, { method: "GET" })
+    fetch(`${baseURL}/contacto/contactoGet.php`, { method: "GET" })
       .then((r) => r.json())
       .then((data) => {
         setContactos(data?.contacto?.slice().reverse()?.[0] || {});
@@ -69,7 +69,7 @@ export default function Footer() {
                 className="footer__iconBtn"
                 aria-label="Instagram"
               >
-                <FontAwesomeIcon icon={faCamera} />
+                <FontAwesomeIcon icon={faInstagram} />
               </a>
             )}
             {contactos?.facebook && (

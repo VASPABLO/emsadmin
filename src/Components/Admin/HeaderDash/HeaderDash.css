@@ -11,8 +11,6 @@
     align-items: center;
     gap: 0.7rem;
     animation: dashFadeIn 0.35s ease both;
-    width: 100%;
-    min-width: 0;
 }
 
 .deFlexHeader {
@@ -20,8 +18,6 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.9rem;
-    flex-wrap: wrap;
-    min-width: 0;
 }
 
 .homeSessionBtn {
@@ -109,35 +105,5 @@
 
     .homeSessionText span {
         font-size: 0.7rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .HeaderDashContain {
-        padding: 0.55rem 0.65rem;
-        border-radius: 16px;
-        gap: 0.55rem;
-    }
-
-    .deFlexHeader {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.5rem;
-    }
-
-    .deFlexHeader > * {
-        width: 100%;
-    }
-
-    .homeSessionBtn {
-        width: 100%;
-        min-height: 46px;
-    }
-}
-
-@media (max-width: 480px) {
-    .deFlexHeader {
-        grid-template-columns: 1fr;
     }
 }

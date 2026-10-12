@@ -6,7 +6,13 @@ import ProductosMain from '../../Components/Admin/ProductosMain/ProductosMain'
 import UsuariosMain from '../../Components/Admin/UsuariosMain/UsuariosMain'
 import CardsCantidad from '../../Components/Admin/CardsCantidad/CardsCantidad'
 import InfoUserMain from '../../Components/Admin/InfoUserMain/InfoUserMain'
+import AlertaStockBajo from '../../Components/Admin/AlertaStockBajo/AlertaStockBajo'
+import { useAuth } from '../../Context/AuthContext'
+
 export default function Main() {
+    const { usuario } = useAuth();
+    const esAdmin = usuario?.rol === 'admin';
+
     return (
         <div className='containerGrid'>
             <Header />
@@ -15,10 +21,14 @@ export default function Main() {
                 <HeaderDash />
 
                 <div className='dashboardMain__content'>
-                    <div className='dashboardMain__row dashboardMain__row--top'>
-                        <CardsCantidad />
-                        <UsuariosMain />
-                    </div>
+                    <AlertaStockBajo />
+
+                    {esAdmin && (
+                        <div className='dashboardMain__row dashboardMain__row--top'>
+                            <CardsCantidad />
+                            <UsuariosMain />
+                        </div>
+                    )}
 
                     <div className='dashboardMain__row dashboardMain__row--bottom'>
                         <ProductosMain />

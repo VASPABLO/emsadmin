@@ -57,7 +57,7 @@ export default function Home() {
   const cargarDatos = async () => {
     try {
       const [resDestacados] = await Promise.all([
-        fetch(`${baseURL}/destacadosGet.php`, { method: 'GET' }),
+        fetch(`${baseURL}/destacados/destacadosGet.php`, { method: 'GET' }),
       ]);
 
       const dataDestacados = await resDestacados.json();

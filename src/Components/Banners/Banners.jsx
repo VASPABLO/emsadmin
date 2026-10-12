@@ -23,7 +23,7 @@ export default function Banners() {
     }, [images]);
 
     const cargarBanners = () => {
-        fetch(`${baseURL}/bannersGet.php`, {
+        fetch(`${baseURL}/banners/bannersGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())

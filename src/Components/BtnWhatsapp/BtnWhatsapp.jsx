@@ -10,14 +10,38 @@ export default function BtnWhatsapp() {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [contactos, setContactos] = useState([]);
     const [selectedContact, setSelectedContact] = useState(null);
-    const [noteText, setNoteText] = useState('');
+    const [noteText, setNoteText] = useState('¡Hola! Estoy interesado en..');
+    const [footerOffset, setFooterOffset] = useState(0);
 
     useEffect(() => {
         cargarContacto();
     }, []);
 
+    useEffect(() => {
+        const updateFooterOffset = () => {
+            const footerElement = document.querySelector('.footer');
+            if (!footerElement) {
+                setFooterOffset(0);
+                return;
+            }
+
+            const footerRect = footerElement.getBoundingClientRect();
+            const overlap = Math.max(0, window.innerHeight - footerRect.top);
+            setFooterOffset(overlap > 0 ? overlap + 12 : 0);
+        };
+
+        updateFooterOffset();
+        window.addEventListener('scroll', updateFooterOffset, { passive: true });
+        window.addEventListener('resize', updateFooterOffset);
+
+        return () => {
+            window.removeEventListener('scroll', updateFooterOffset);
+            window.removeEventListener('resize', updateFooterOffset);
+        };
+    }, []);
+
     const cargarContacto = () => {
-        fetch(`${baseURL}/contactoGet.php`, {
+        fetch(`${baseURL}/contacto/contactoGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -59,6 +83,7 @@ export default function BtnWhatsapp() {
         <div className='containWpp'>
             <button
                 className='btnWhatsapp'
+                style={{ '--floating-footer-offset': `${footerOffset}px` }}
                 onClick={openModal}
             >
                 <img src={whatsappIcon} alt="whatsappIcon" />
@@ -116,8 +141,8 @@ export default function BtnWhatsapp() {
                     </div>
                     <div className='sendWpp'>
                         <textarea
-                            placeholder="Envianos un mensaje"
-                           value={noteText}
+                            placeholder="Envíanos un mensaje"
+                            value={noteText}
                             onChange={(e) => setNoteText(e.target.value)}
                         />
                         <button onClick={handleWhatsappMessage}>

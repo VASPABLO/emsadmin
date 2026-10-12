@@ -62,9 +62,9 @@ export default function Detail() {
             setLoading(true);
 
             const [productosRes, contactoRes, categoriasRes] = await Promise.all([
-                fetch(`${baseURL}/productosGet.php`, { method: 'GET' }),
-                fetch(`${baseURL}/contactoGet.php`, { method: 'GET' }),
-                fetch(`${baseURL}/categoriasGet.php`, { method: 'GET' })
+                fetch(`${baseURL}/productos/productosGet.php`, { method: 'GET' }),
+                fetch(`${baseURL}/contacto/contactoGet.php`, { method: 'GET' }),
+                fetch(`${baseURL}/categorias/categoriasGet.php`, { method: 'GET' })
             ]);
 
             const [productosData, contactoData, categoriasData] = await Promise.all([

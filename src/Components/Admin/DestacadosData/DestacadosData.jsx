@@ -11,37 +11,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import './DestacadosData.css';
 import NewDestacado from '../NewDestacado/NewDestacado';
-
-const buildEndpointCandidates = (fileName) => [
-  new URL(fileName, `${baseURL}/`).toString(),
-  new URL(`public/${fileName}`, `${baseURL}/`).toString(),
-  new URL(`build/${fileName}`, `${baseURL}/`).toString(),
-];
-
-const fetchJsonFromCandidates = async (fileName, options = {}) => {
-  for (const endpoint of buildEndpointCandidates(fileName)) {
-    try {
-      const response = await fetch(endpoint, options);
-      if (!response.ok) {
-        continue;
-      }
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        continue;
-      }
-
-      const data = await response.json();
-      return { data, endpoint };
-    } catch (error) {
-      // Continue trying alternative endpoints.
-    }
-  }
-
-  throw new Error(`No se encontró un endpoint válido para ${fileName}`);
-};
 
 export default function DestacadosData() {
   const [destacados, setDestacados] = useState([]);
@@ -51,19 +23,20 @@ export default function DestacadosData() {
     cargarDestacados();
   }, []);
 
-  const cargarDestacados = async () => {
+  const cargarDestacados = () => {
     setLoading(true);
-    try {
-      const { data } = await fetchJsonFromCandidates('destacadosGet.php', {
-        method: 'GET',
+    apiFetch(`${baseURL}/destacados/destacadosGet.php`, {
+      method: 'GET',
+    })
+      .then(response => response.json())
+      .then(data => {
+        setDestacados(data.destacados || []);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error al cargar destacados:', error);
+        setLoading(false);
       });
-      setDestacados(data.destacados || []);
-    } catch (error) {
-      console.error('Error al cargar destacados:', error);
-      toast.error('No se pudo cargar la lista de destacados');
-    } finally {
-      setLoading(false);
-    }
   };
 
   const eliminarDestacado = (idDestacado) => {
@@ -79,10 +52,11 @@ export default function DestacadosData() {
       borderRadius: 18,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetchJsonFromCandidates(`destacadoDelete.php?idDestacado=${idDestacado}`, {
+        apiFetch(`${baseURL}/destacados/destacadoDelete.php?idDestacado=${idDestacado}`, {
           method: 'DELETE',
         })
-          .then(({ data }) => {
+          .then(response => response.json())
+          .then(data => {
             if (data.error) {
               toast.error(data.error);
               return;

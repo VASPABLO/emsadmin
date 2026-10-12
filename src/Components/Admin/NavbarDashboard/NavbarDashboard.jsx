@@ -14,28 +14,34 @@ import {
     faCode,
     faClipboardList,
     faStar,
-    faGlobe
+    faCartPlus,
+    faChartLine
 } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../../images/logo.png';
 import Logout from '../Logout/Logout';
+import { useAuth } from '../../../Context/AuthContext';
+
+const TODOS_LOS_ROLES = ['vendedor', 'cajera', 'admin'];
 
 export default function Navbar() {
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { usuario } = useAuth();
 
     const menuItems = [
-        { to: '/dashboard', label: 'Inicio', icon: faHome },
-        { to: '/home', label: 'Sitio web', icon: faGlobe },
-        { to: '/dashboard/productos', label: 'Productos', icon: faBoxOpen },
-        { to: '/dashboard/pedidos', label: 'Pedidos', icon: faClipboardList },
-        { to: '/dashboard/categorias', label: 'Categorías', icon: faLayerGroup },
-        { to: '/dashboard/banners', label: 'Banners', icon: faImage },
-        { to: '/dashboard/marcas', label: 'Marcas', icon: faStar },
-        { to: '/dashboard/destacados', label: 'Destacados', icon: faStar },
-        { to: '/dashboard/contacto', label: 'Contacto', icon: faAddressBook },
-        { to: '/dashboard/usuarios', label: 'Usuarios', icon: faUser },
-        // { to: '/dashboard/codigos', label: 'Códigos', icon: faCode },
-    ];
+        { to: '/dashboard', label: 'Inicio', icon: faHome, roles: TODOS_LOS_ROLES },
+        { to: '/dashboard/nuevo-pedido', label: 'Nuevo pedido', icon: faCartPlus, roles: ['vendedor', 'admin'] },
+        { to: '/dashboard/productos', label: 'Productos', icon: faBoxOpen, roles: ['admin'] },
+        { to: '/dashboard/pedidos', label: 'Pedidos', icon: faClipboardList, roles: ['cajera', 'admin'] },
+        { to: '/dashboard/categorias', label: 'Categorías', icon: faLayerGroup, roles: ['admin'] },
+        { to: '/dashboard/banners', label: 'Banners', icon: faImage, roles: ['admin'] },
+        { to: '/dashboard/marcas', label: 'Marcas', icon: faStar, roles: ['admin'] },
+        { to: '/dashboard/destacados', label: 'Destacados', icon: faStar, roles: ['admin'] },
+        { to: '/dashboard/contacto', label: 'Contacto', icon: faAddressBook, roles: ['admin'] },
+        { to: '/dashboard/usuarios', label: 'Usuarios', icon: faUser, roles: ['admin'] },
+        { to: '/dashboard/reportes', label: 'Reportes', icon: faChartLine, roles: ['admin'] },
+        // { to: '/dashboard/codigos', label: 'Códigos', icon: faCode, roles: ['admin'] },
+    ].filter((item) => item.roles.includes(usuario?.rol));
 
     const isActive = (path) => {
         return location.pathname === path;
@@ -47,22 +53,15 @@ export default function Navbar() {
 
     return (
         <>
-            <div className="mobileAdminTopbar">
-                <button
-                    type="button"
-                    className="sidebarToggleBtn"
-                    onClick={() => setIsSidebarOpen((prev) => !prev)}
-                    aria-label={isSidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
-                    aria-expanded={isSidebarOpen}
-                >
-                    <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
-                </button>
-
-                <Anchor to="/dashboard" className="mobileAdminBrand" onClick={() => setIsSidebarOpen(false)}>
-                    <img src={logo} alt="Logo EMS" />
-                    <span>Panel Admin</span>
-                </Anchor>
-            </div>
+            <button
+                type="button"
+                className="sidebarToggleBtn"
+                onClick={() => setIsSidebarOpen((prev) => !prev)}
+                aria-label={isSidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
+                aria-expanded={isSidebarOpen}
+            >
+                <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
+            </button>
 
             {isSidebarOpen && (
                 <button

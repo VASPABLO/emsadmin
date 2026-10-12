@@ -26,10 +26,6 @@
   transition: transform 0.25s ease;
 }
 
-.mobileAdminTopbar {
-  display: none;
-}
-
 .sidebarToggleBtn,
 .sidebarOverlay {
   display: none;
@@ -202,49 +198,13 @@
 }
 
 @media (max-width: 768px) {
-  .mobileAdminTopbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.7rem;
-    width: 100%;
-    min-height: 58px;
-    padding: 0.5rem 0.7rem;
-    background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 14px;
-    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.08);
-    margin-bottom: 0.75rem;
-    position: sticky;
-    top: 0;
-    z-index: 1150;
-  }
-
-  .mobileAdminBrand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    text-decoration: none;
-    color: #0f172a;
-    font-weight: 800;
-    font-size: 0.9rem;
-  }
-
-  .mobileAdminBrand img {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    object-fit: contain;
-    background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    padding: 0.2rem;
-  }
-
   .sidebarToggleBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: static;
+    position: fixed;
+    top: 12px;
+    left: 12px;
     width: 44px;
     height: 44px;
     border: none;
@@ -252,7 +212,8 @@
     background: #0f172a;
     color: #ffffff;
     font-size: 1rem;
-    box-shadow: 0 8px 20px rgba(2, 6, 23, 0.24);
+    z-index: 1400;
+    box-shadow: 0 10px 24px rgba(2, 6, 23, 0.3);
     cursor: pointer;
   }
 
@@ -270,22 +231,11 @@
     position: fixed;
     left: 0;
     top: 0;
-    width: min(260px, 86vw);
-    min-width: min(260px, 86vw);
-    height: 100dvh;
     z-index: 1300;
     transform: translateX(-100%);
-    overflow-y: auto;
   }
 
   .navbarDashboard.is-open {
     transform: translateX(0);
-  }
-
-  .sidebarHeader {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: linear-gradient(180deg, #0b5fb1 0%, #0c71cf 58%, rgba(15, 23, 42, 0.96) 100%);
   }
 }

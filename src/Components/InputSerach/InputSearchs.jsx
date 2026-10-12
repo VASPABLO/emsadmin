@@ -22,7 +22,7 @@ export default function InputSearchs() {
     }, []);
 
     const cargarProductos = () => {
-        fetch(`${baseURL}/productosGet.php`, {
+        fetch(`${baseURL}/productos/productosGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -33,7 +33,7 @@ export default function InputSearchs() {
     };
 
     const cargarCategorias = () => {
-        fetch(`${baseURL}/categoriasGet.php`, {
+        fetch(`${baseURL}/categorias/categoriasGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())

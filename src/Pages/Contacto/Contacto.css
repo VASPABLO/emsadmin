@@ -25,33 +25,7 @@
   width: 100%;
   max-width: 1180px;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
   justify-content: center;
-}
-
-.contact-whatsapp-back-btn {
-  width: fit-content;
-  min-height: 46px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  background: rgba(255, 255, 255, 0.86);
-  color: #0f172a;
-  text-decoration: none;
-  font-weight: 700;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.contact-whatsapp-back-btn:hover {
-  transform: translateY(-2px);
-  background: #ffffff;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
 }
 
 .contact-whatsapp-card {
@@ -185,12 +159,6 @@
     border-radius: 24px;
   }
 
-  .contact-whatsapp-back-btn {
-    min-height: 44px;
-    padding: 9px 14px;
-    font-size: 0.9rem;
-  }
-
   .contact-whatsapp-description {
     font-size: 0.96rem;
   }
@@ -206,15 +174,6 @@
 }
 
 @media (max-width: 480px) {
-  .contact-whatsapp-container {
-    gap: 10px;
-  }
-
-  .contact-whatsapp-back-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
   .contact-whatsapp-title {
     font-size: 1.9rem;
   }

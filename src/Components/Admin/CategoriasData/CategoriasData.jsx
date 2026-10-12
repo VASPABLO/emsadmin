@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import './CategoriasData.css';
 import 'jspdf-autotable';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import NewCategoria from '../NewCategoria/NewCategoria';
 
 export default function CategoriasData() {
@@ -30,7 +31,7 @@ export default function CategoriasData() {
 
     const cargarCategoria = () => {
         setLoading(true);
-        fetch(`${baseURL}/categoriasGet.php`, {
+        apiFetch(`${baseURL}/categorias/categoriasGet.php`, {
             method: 'GET',
         })
             .then((response) => response.json())
@@ -57,7 +58,7 @@ export default function CategoriasData() {
             borderRadius: 18,
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`${baseURL}/categoriaDelete.php?idCategoria=${idCategoria}`, {
+                apiFetch(`${baseURL}/categorias/categoriaDelete.php?idCategoria=${idCategoria}`, {
                     method: 'DELETE',
                 })
                     .then((response) => response.json())
@@ -100,7 +101,7 @@ export default function CategoriasData() {
             categoria: nuevaCategoria !== '' ? nuevaCategoria : categoria.categoria,
         };
 
-        fetch(`${baseURL}/categoriaPut.php?idCategoria=${idCategoria}`, {
+        apiFetch(`${baseURL}/categorias/categoriaPut.php?idCategoria=${idCategoria}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

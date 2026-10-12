@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './UsuariosMain.css';
 import { Link as Anchor } from 'react-router-dom';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function UsuariosData() {
     const [usuarios, setUsuarios] = useState([]);
@@ -14,7 +15,7 @@ export default function UsuariosData() {
     const cargarUsuarios = () => {
         setLoading(true);
 
-        fetch(`${baseURL}/usuariosGet.php`, {
+        apiFetch(`${baseURL}/usuarios/usuariosGet.php`, {
             method: 'GET',
         })
             .then((response) => response.json())

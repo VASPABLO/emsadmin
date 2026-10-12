@@ -22,7 +22,7 @@ export default function Favoritos() {
     }, [modalIsOpen]);
 
     const cargarProductos = () => {
-        fetch(`${baseURL}/productosGet.php`, {
+        fetch(`${baseURL}/productos/productosGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())

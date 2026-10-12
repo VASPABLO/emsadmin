@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faBook, faImage, faAddressBook, faTachometerAlt, faCode } from '@fortawesome/free-solid-svg-icons';
 import { Link as Anchor } from "react-router-dom";
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 
 export default function CardsCantidad() {
     const [productos, setProductos] = useState([]);
@@ -23,12 +24,12 @@ export default function CardsCantidad() {
 
         try {
             const [productosRes, usuariosRes, bannersRes, categoriasRes, contactosRes, codigosRes] = await Promise.all([
-                fetch(`${baseURL}/productosGet.php`),
-                fetch(`${baseURL}/usuariosGet.php`),
-                fetch(`${baseURL}/bannersGet.php`),
-                fetch(`${baseURL}/categoriasGet.php`),
-                fetch(`${baseURL}/contactoGet.php`),
-                fetch(`${baseURL}/codigosGet.php`),
+                apiFetch(`${baseURL}/productos/productosGet.php`),
+                apiFetch(`${baseURL}/usuarios/usuariosGet.php`),
+                apiFetch(`${baseURL}/banners/bannersGet.php`),
+                apiFetch(`${baseURL}/categorias/categoriasGet.php`),
+                apiFetch(`${baseURL}/contacto/contactoGet.php`),
+                apiFetch(`${baseURL}/codigos/codigosGet.php`),
             ]);
 
             const [productosData, usuariosData, bannersData, categoriasData, contactosData, codigosData] = await Promise.all([

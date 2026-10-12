@@ -13,7 +13,7 @@ export default function Profile({ hideIdentity = false }) {
 
 
     const cargarContacto = () => {
-        fetch(`${baseURL}/contactoGet.php`, {
+        fetch(`${baseURL}/contacto/contactoGet.php`, {
             method: 'GET',
         })
             .then(response => response.json())

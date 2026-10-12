@@ -98,7 +98,7 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const cargarBanners = () => {
-    fetch(`${baseURL}/bannersGet.php`, { method: 'GET' })
+    fetch(`${baseURL}/banners/bannersGet.php`, { method: 'GET' })
       .then((response) => response.json())
       .then((data) => {
         const bannerImages = (data?.banner || []).map((b) => b.imagen);
@@ -125,7 +125,7 @@ export default function Navbar() {
     <>
       <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
         <nav className="navbar">
-          <Anchor to="/home" className="navbar__brand">
+          <Anchor to="/" className="navbar__brand">
             <div className="navbar__brand-mark">
               <img src={logo} alt="EMS Soluciones" />
             </div>
@@ -137,7 +137,7 @@ export default function Navbar() {
           </Anchor>
 
           <div className="navbar__center">
-            <NavLink to="/home" end className="navbar__link">
+            <NavLink to="/" end className="navbar__link">
               Inicio
             </NavLink>
             <NavLink to="/nosotros" className="navbar__link">
@@ -191,7 +191,7 @@ export default function Navbar() {
 
         <div className="mobile-drawer__body">
           <div className="mobile-drawer__nav">
-            <Anchor to="/home" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
+            <Anchor to="/" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
               <span>Inicio</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </Anchor>
@@ -213,11 +213,6 @@ export default function Navbar() {
 
             <Anchor to="/contacto" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
               <span>Contacto</span>
-              <FontAwesomeIcon icon={faChevronRight} />
-            </Anchor>
-            {/* Solo visible para admin, puedes agregar lógica de permisos si lo deseas */}
-            <Anchor to="/dashboard/marcas" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
-              <span>Marcas</span>
               <FontAwesomeIcon icon={faChevronRight} />
             </Anchor>
 
@@ -245,7 +240,7 @@ export default function Navbar() {
         aria-label="Navegación móvil"
       >
         <NavLink
-          to="/home"
+          to="/"
           end
           className={({ isActive }) => `bottom-menu-link ${isActive ? 'active' : ''}`}
         >

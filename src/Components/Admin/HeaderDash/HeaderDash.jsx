@@ -16,7 +16,7 @@ export default function HeaderDash() {
             <div className='deFlexHeader'>
                 <ButonScreen />
                 <ButonInstallAppNav />
-                <Anchor to='/home' className='homeSessionBtn'>
+                <Anchor to='/' className='homeSessionBtn'>
                     <div className='homeSessionAvatar'>
                         <FontAwesomeIcon icon={faHome} />
                     </div>

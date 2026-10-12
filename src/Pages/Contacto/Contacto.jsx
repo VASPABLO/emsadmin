@@ -1,16 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import './Contacto.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
-import { faArrowLeft, faArrowRight, faClock, faHeadset } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faClock, faHeadset } from '@fortawesome/free-solid-svg-icons';
 import baseURL from '../../Components/url';
 
 export default function ContactoWhatsapp() {
   const [phoneText, setPhoneText] = useState('6070-5566');
 
   useEffect(() => {
-    fetch(`${baseURL}/contactoGet.php`, {
+    fetch(`${baseURL}/contacto/contactoGet.php`, {
       method: 'GET',
     })
       .then((response) => response.json())
@@ -49,11 +48,6 @@ export default function ContactoWhatsapp() {
       <div className="contact-whatsapp-bg"></div>
 
       <div className="contact-whatsapp-container">
-        <Link to="/home" className="contact-whatsapp-back-btn">
-          <FontAwesomeIcon icon={faArrowLeft} />
-          <span>Volver</span>
-        </Link>
-
         <div className="contact-whatsapp-card">
           <div className="contact-whatsapp-badge">
             <FontAwesomeIcon icon={faWhatsapp} />

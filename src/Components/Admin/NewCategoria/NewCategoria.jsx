@@ -3,6 +3,7 @@ import './NewCategoria.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import baseURL from '../../url';
+import apiFetch from '../../apiFetch';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus,
@@ -34,7 +35,7 @@ export default function NewCategoria({ onCreated }) {
         setMensaje('Creando categoría...');
 
         try {
-            const response = await fetch(`${baseURL}/categoriasPost.php`, {
+            const response = await apiFetch(`${baseURL}/categorias/categoriasPost.php`, {
                 method: 'POST',
                 body: formData,
             });
