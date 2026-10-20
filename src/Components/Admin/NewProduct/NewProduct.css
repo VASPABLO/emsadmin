@@ -36,12 +36,28 @@
 
 .newProductModal {
 	width: 100%;
-	max-width: 780px;
+	max-width: 980px;
 	max-height: 90vh;
 	background: #ffffff;
 	border-radius: 28px;
 	box-shadow: 0 30px 60px rgba(15, 23, 42, 0.18);
-	overflow-y: auto;
+	/* El encabezado queda fijo y solo scrollea el formulario. */
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.newProductModal__header {
+	flex: 0 0 auto;
+}
+
+.newProductForm::-webkit-scrollbar {
+	width: 8px;
+}
+
+.newProductForm::-webkit-scrollbar-thumb {
+	background: rgba(15, 23, 42, 0.2);
+	border-radius: 999px;
 }
 
 .newProductModal::-webkit-scrollbar {
@@ -105,12 +121,25 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	/* Es la parte que scrollea; el encabezado del modal queda fijo. */
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
 }
 
 .newProductForm__grid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	/* Tantas columnas como entren: 3 en escritorio, 2 en tablet, 1 en móvil. */
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
 	gap: 0.85rem;
+}
+
+/* El título ocupa dos columnas y la categoría cierra la fila, así no queda
+   un hueco vacío al lado del título. */
+@media (min-width: 900px) {
+	.newProductForm__grid > .fieldBox:first-child {
+		grid-column: span 2;
+	}
 }
 
 .fieldBox {
@@ -291,7 +320,15 @@
 	display: flex;
 	justify-content: flex-end;
 	gap: 0.8rem;
-	padding-top: 0.3rem;
+	/* Los botones quedan siempre a la vista al pie del formulario. El bottom
+	   negativo más el padding tapan el padding inferior del form, para que no
+	   se vea contenido colándose por debajo de la barra. */
+	position: sticky;
+	bottom: -1.3rem;
+	margin-top: auto;
+	padding: 0.7rem 0 1.3rem;
+	background: #ffffff;
+	border-top: 1px solid #eef2f7;
 }
 
 .modalBtn {
@@ -338,6 +375,10 @@
 
 	.newProductForm__grid {
 		grid-template-columns: 1fr;
+	}
+
+	.newProductForm__grid > .fieldBox:first-child {
+		grid-column: auto;
 	}
 
 	.previewCard__top,
