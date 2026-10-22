@@ -10,6 +10,7 @@ import {
   faShoppingCart,
   faPhoneAlt,
   faChevronRight,
+  faUserShield,
 } from '@fortawesome/free-solid-svg-icons';
 
 import logo from '../../images/logo.png';
@@ -160,6 +161,11 @@ export default function Navbar() {
               <InputSerach />
             </div>
 
+            <Anchor to="/login" className="navbar__admin" aria-label="Ingresar al panel de administración">
+              <FontAwesomeIcon icon={faUserShield} />
+              <span>Admin</span>
+            </Anchor>
+
             <button
               className={`navbar__toggle ${isOpen ? 'navbar__toggle--active' : ''}`}
               onClick={() => setIsOpen((v) => !v)}
@@ -227,6 +233,14 @@ export default function Navbar() {
               </span>
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
+
+            <Anchor to="/login" className="mobile-drawer__link" onClick={() => setIsOpen(false)}>
+              <span className="mobile-drawer__label">
+                <FontAwesomeIcon icon={faUserShield} />
+                Admin
+              </span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </Anchor>
           </div>
 
           <div className="mobile-drawer__extras">

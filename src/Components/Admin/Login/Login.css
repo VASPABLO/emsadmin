@@ -219,3 +219,25 @@
     font-size: 0.92rem;
   }
 }
+.successBox {
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+  color: #067647;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.authLink {
+  align-self: center;
+  color: #0c71cf;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.authLink:hover {
+  text-decoration: underline;
+}

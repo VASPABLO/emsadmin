@@ -4,7 +4,7 @@ import { faEye, faEyeSlash, faLock, faEnvelope } from '@fortawesome/free-solid-s
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Login.css';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import baseURL from '../../url';
 
 export default function Login() {
@@ -154,7 +154,9 @@ export default function Login() {
                     >
                         {isSubmitting ? 'Ingresando...' : 'Iniciar sesión'}
                     </button>
-                  
+
+                    <Link to="/recuperar" className="authLink">¿Olvidaste tu contraseña?</Link>
+
                 </form>
             </div>
         </div>

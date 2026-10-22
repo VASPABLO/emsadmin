@@ -9,6 +9,8 @@ import Nosotros from "./Nosotros/Nosotros";
 import Servicios from "./Servicios/Servicios";
 import Contacto from "./Contacto/Contacto";
 import Auth from "../Components/Admin/Auth/Auth";
+import RecuperarContrasena from "../Components/Admin/RecuperarContrasena/RecuperarContrasena";
+import RestablecerContrasena from "../Components/Admin/RestablecerContrasena/RestablecerContrasena";
 import Main from "./Main/Main";
 import Productos from "./Productos/Productos";
 import Pedidos from "./Pedidos/Pedidos";
@@ -51,6 +53,14 @@ export const router = createBrowserRouter([
     {
         path: "/login",
         element: <Auth />,
+    },
+    {
+        path: "/recuperar",
+        element: <RecuperarContrasena />,
+    },
+    {
+        path: "/restablecer",
+        element: <RestablecerContrasena />,
     },
     {
         path: "/dashboard",
