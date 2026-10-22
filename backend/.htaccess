@@ -1,0 +1,12 @@
+# Bloquea el acceso web a los archivos de entorno (.env, .env.local, .env.example,
+# .env.backup) y al composer.json/lock. En producción el backend se sirve desde la
+# raíz del dominio, así que estos archivos quedarían públicos sin esta regla.
+<FilesMatch "^(\.env.*|composer\.(json|lock))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

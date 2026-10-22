@@ -1,16 +1,29 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/env.php';
 
-use Dotenv\Dotenv;
+$faltantes = [];
+foreach (['DB_HOST', 'DB_NAME', 'DB_USER'] as $clave) {
+    if (env($clave) === null) {
+        $faltantes[] = $clave;
+    }
+}
 
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
+if ($faltantes !== []) {
+    $mensaje = 'Faltan variables de entorno (' . implode(', ', $faltantes) . '). '
+        . 'Revisá backend/.env.local en desarrollo o backend/.env en producción.';
 
-$servidor = $_ENV['DB_HOST'] . ':' . $_ENV['DB_PORT'];
-$dsn = "mysql:host=$servidor;dbname=" . $_ENV['DB_NAME'] . ";charset=utf8mb4";
+    if (function_exists('respondJson')) {
+        respondJson(['error' => $mensaje], 500);
+    }
 
-$conexion = new PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS'], [
+    throw new RuntimeException($mensaje);
+}
+
+$servidor = env('DB_HOST') . ':' . env('DB_PORT', '3306');
+$dsn = "mysql:host=$servidor;dbname=" . env('DB_NAME') . ";charset=utf8mb4";
+
+$conexion = new PDO($dsn, env('DB_USER'), env('DB_PASS', ''), [
     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
 ]);
 $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

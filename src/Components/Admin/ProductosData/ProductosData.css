@@ -274,8 +274,57 @@
   max-width: 760px;
   max-height: 90vh;
   border-radius: 16px;
-  overflow-y: auto;
   padding: 1rem;
+  /* El modal ya no scrollea entero: las pestañas quedan fijas arriba y solo
+     scrollea el cuerpo del formulario. */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* El modal de editar producto tiene 12 campos: se ensancha para que entren
+   tres columnas y no haya que bajar tanto. */
+.modalEditarProducto {
+  max-width: 980px;
+}
+
+.modal-content > .deFlexBtnsModal {
+  flex: 0 0 auto;
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* Cuerpo scrolleable del modal (los formularios y las pestañas del producto). */
+.modal-content > form,
+.modal-content > .sectiontext,
+.modal-content > .sectionImg {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: 0.85rem;
+  padding-right: 0.35rem;
+}
+
+.modal-content > form::-webkit-scrollbar,
+.modal-content > .sectiontext::-webkit-scrollbar,
+.modal-content > .sectionImg::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content > form::-webkit-scrollbar-thumb,
+.modal-content > .sectiontext::-webkit-scrollbar-thumb,
+.modal-content > .sectionImg::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
+  border-radius: 999px;
+}
+
+/* El botón de guardar queda siempre a la vista, al pie del formulario. */
+.modal-content > .sectiontext > .btnPost,
+.modal-content > .sectionImg > .btnPost {
+  position: sticky;
+  bottom: 0;
+  align-self: flex-end;
+  margin-top: auto;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
 }
 
 .modal-contentImg {
@@ -342,6 +391,13 @@
   gap: 0.75rem;
 }
 
+/* Tantas columnas como entren (3 con el modal ancho, 2 o 1 al achicar), para
+   que el formulario no quede en una tira larga. */
+.modalEditarProducto .flexGrap {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr));
+  align-content: start;
+}
+
 fieldset {
   padding: 0.45rem 0.55rem;
   border-radius: 10px;
@@ -370,8 +426,17 @@ textarea {
   color: #0f172a;
 }
 
-#descripcion {
+#descripcion,
+.fieldsetTitulo {
   grid-column: 1 / -1;
+}
+
+/* Con tres columnas, el título ocupa dos y la categoría cierra la fila:
+   así no queda el hueco vacío que dejaba el título solo. */
+@media (min-width: 900px) {
+  .modalEditarProducto .fieldsetTitulo {
+    grid-column: span 2;
+  }
 }
 
 textarea {
@@ -482,11 +547,13 @@ textarea {
     align-items: flex-start;
   }
 
-  .flexGrap {
+  .flexGrap,
+  .modalEditarProducto .flexGrap {
     grid-template-columns: 1fr;
   }
 
-  #descripcion {
+  #descripcion,
+  .fieldsetTitulo {
     grid-column: auto;
   }
 

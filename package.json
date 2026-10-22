@@ -27,7 +27,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:prod-api": "set \"DEV_API_TARGET=https://emscrsoluciones.com\" && set \"REACT_APP_API_URL=/api\" && react-scripts start",
     "build": "react-scripts build",
+    "build:dev-api": "set \"REACT_APP_API_URL=http://localhost:8081/emsadmin/backend\" && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

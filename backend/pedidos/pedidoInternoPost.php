@@ -117,7 +117,7 @@ try {
 
     $stmtPedido = $conexion->prepare($sqlInsertPedido);
     $stmtPedido->execute([
-        ':estado' => 'Pendiente',
+        ':estado' => 'En proceso',
         ':productos' => json_encode($lineasPedido, JSON_UNESCAPED_UNICODE),
         ':total' => number_format($total, 2, '.', ''),
         ':nombre' => $nombre,

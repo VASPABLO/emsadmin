@@ -345,7 +345,7 @@ export default function Cart({ isOpen, onRequestClose, hideTrigger = false }) {
             formData.append('pago', paymentMethod);
             formData.append('nota', orderNote);
             formData.append('codigo', '');
-            formData.append('estado', 'Pendiente');
+            formData.append('estado', 'En proceso');
 
             const response = await fetch(`${baseURL}/pedidos/pedidoPost.php`, {
                 method: 'POST',

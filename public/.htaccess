@@ -1,6 +1,25 @@
 RewriteEngine On
 RewriteBase /
 
+# Anti-caché: index.html nunca se debe guardar en caché (ni el navegador ni el
+# CDN de Hostinger), porque cada vez que se sube un build nuevo, este archivo
+# cambia pero mantiene el mismo nombre. Si queda cacheado, el sitio sigue
+# mostrando la versión vieja aunque ya se haya subido la nueva.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html|json)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+
+    # Lo de adentro de /static/ sí es seguro cachear por mucho tiempo: cada
+    # archivo tiene un código único en el nombre que cambia solo cuando cambia
+    # su contenido, así que nunca hay riesgo de servir una versión vieja.
+    <FilesMatch "\.(js|css|woff2?|ttf|eot|png|jpe?g|gif|svg|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
 # Bloquear acceso al archivo .env
 
 <FilesMatch "^\.env$">

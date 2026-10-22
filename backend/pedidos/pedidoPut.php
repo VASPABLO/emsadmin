@@ -1,91 +1,225 @@
 <?php
+// Cambio de estado de un pedido (módulo de cajas).
+//
+// El flujo tiene tres estados y uno solo mueve inventario:
+//
+//   En proceso  -> el pedido está abierto, no toca stock
+//   Facturado   -> descuenta del stock y congela el costo de cada línea
+//   Cancelado   -> cerrado sin venta
+//
+// Volver atrás desde Facturado (a Cancelado o a En proceso) devuelve al
+// inventario lo que se había descontado, así el stock no se desfasa cuando se
+// corrige una factura. Aplica igual para pedidos de la web y del vendedor.
+
 require __DIR__ . '/../config/bootstrap.php';
 
 requireRole(['cajera', 'admin']);
 
-$ESTADOS_INTERNOS_VALIDOS = ['Pendiente', 'En proceso', 'Recibido', 'Facturado', 'Rechazado'];
+const ESTADOS_VALIDOS = ['En proceso', 'Facturado', 'Cancelado'];
+
+if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
+    respondJson(['error' => 'Método no permitido'], 405);
+}
+
+$idPedido = isset($_GET['idPedido']) ? (int) $_GET['idPedido'] : 0;
+$datos = json_decode(file_get_contents('php://input'), true);
+$nuevoEstado = isset($datos['estado']) ? trim((string) $datos['estado']) : '';
+
+if ($idPedido <= 0 || $nuevoEstado === '') {
+    respondJson(['error' => 'ID de pedido o estado no proporcionado'], 400);
+}
+
+if (!in_array($nuevoEstado, ESTADOS_VALIDOS, true)) {
+    respondJson(['error' => 'Estado no válido. Solo se admite: ' . implode(', ', ESTADOS_VALIDOS)], 400);
+}
+
+/**
+ * Suma las cantidades por producto: un mismo producto puede venir en más de
+ * una línea del pedido y el stock se tiene que mover una sola vez.
+ */
+function cantidadesPorProducto(?string $productosJson): array
+{
+    $lineas = json_decode((string) $productosJson, true) ?: [];
+    $cantidades = [];
+
+    foreach ($lineas as $linea) {
+        $idProducto = isset($linea['idProducto']) ? (int) $linea['idProducto'] : 0;
+        $cantidad = isset($linea['cantidad']) ? (int) $linea['cantidad'] : 0;
+
+        if ($idProducto > 0 && $cantidad > 0) {
+            $cantidades[$idProducto] = ($cantidades[$idProducto] ?? 0) + $cantidad;
+        }
+    }
+
+    return $cantidades;
+}
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-        $idPedido = isset($_GET['idPedido']) ? $_GET['idPedido'] : null;
-        $data = json_decode(file_get_contents("php://input"), true);
-        $nuevoEstado = isset($data['estado']) ? $data['estado'] : null;
+    $conexion->beginTransaction();
 
-        if (!$idPedido || !$nuevoEstado) {
-            echo json_encode(["error" => "ID de pedido o estado no proporcionado"]);
-            exit;
+    // FOR UPDATE: bloquea el pedido hasta terminar, para que dos cajeras no
+    // puedan facturarlo a la vez y descontar el stock dos veces.
+    $stmtPedido = $conexion->prepare('SELECT estado, productos FROM pedidos WHERE idPedido = :idPedido FOR UPDATE');
+    $stmtPedido->execute([':idPedido' => $idPedido]);
+    $pedido = $stmtPedido->fetch(PDO::FETCH_ASSOC);
+
+    if (!$pedido) {
+        $conexion->rollBack();
+        respondJson(['error' => 'Pedido no encontrado'], 404);
+    }
+
+    $estadoActual = (string) $pedido['estado'];
+    $facturar = $nuevoEstado === 'Facturado' && $estadoActual !== 'Facturado';
+    $revertir = $estadoActual === 'Facturado' && $nuevoEstado !== 'Facturado';
+    $cantidades = ($facturar || $revertir) ? cantidadesPorProducto($pedido['productos']) : [];
+
+    // Productos involucrados, bloqueados mientras dure la transacción.
+    $productos = [];
+    if ($cantidades !== []) {
+        $marcadores = implode(',', array_fill(0, count($cantidades), '?'));
+        $stmtProductos = $conexion->prepare(
+            "SELECT idProducto, titulo, stock, costo FROM productos WHERE idProducto IN ($marcadores) FOR UPDATE"
+        );
+        $stmtProductos->execute(array_keys($cantidades));
+
+        foreach ($stmtProductos->fetchAll(PDO::FETCH_ASSOC) as $producto) {
+            $productos[(int) $producto['idProducto']] = $producto;
         }
+    }
 
-        $sqlSelect = "SELECT origen, estado, productos FROM pedidos WHERE idPedido = :idPedido";
-        $stmtSelect = $conexion->prepare($sqlSelect);
-        $stmtSelect->bindParam(':idPedido', $idPedido, PDO::PARAM_INT);
-        $stmtSelect->execute();
-        $pedidoActual = $stmtSelect->fetch(PDO::FETCH_ASSOC);
+    $movimientos = [];
 
-        if (!$pedidoActual) {
-            echo json_encode(["error" => "Pedido no encontrado"]);
-            exit;
-        }
+    if ($facturar) {
+        // Se controla el stock antes de tocar nada: si falta uno solo, no se
+        // factura. Los productos sin stock cargado (NULL) no se controlan ni se
+        // descuentan: se consideran no inventariados.
+        $faltantes = [];
 
-        if ($pedidoActual['origen'] === 'interno' && !in_array($nuevoEstado, $ESTADOS_INTERNOS_VALIDOS, true)) {
-            echo json_encode(["error" => "Estado no válido para un pedido interno"]);
-            exit;
-        }
+        foreach ($cantidades as $idProducto => $cantidad) {
+            $producto = $productos[$idProducto] ?? null;
 
-        $facturarAhora = $nuevoEstado === 'Facturado'
-            && $pedidoActual['origen'] === 'interno'
-            && $pedidoActual['estado'] !== 'Facturado';
-
-        $conexion->beginTransaction();
-        try {
-            if ($facturarAhora) {
-                // Rebajar inventario y capturar el costo de cada línea al momento de facturar,
-                // para que el reporte de ganancias no dependa del costo actual del producto.
-                $lineas = json_decode($pedidoActual['productos'], true) ?: [];
-
-                $sqlDescontar = "UPDATE productos SET stock = stock - :cantidad WHERE idProducto = :idProducto";
-                $stmtDescontar = $conexion->prepare($sqlDescontar);
-                $sqlCosto = "SELECT costo FROM productos WHERE idProducto = :idProducto";
-                $stmtCosto = $conexion->prepare($sqlCosto);
-
-                foreach ($lineas as &$linea) {
-                    $idProductoLinea = isset($linea['idProducto']) ? (int) $linea['idProducto'] : 0;
-                    $cantidadLinea = isset($linea['cantidad']) ? (int) $linea['cantidad'] : 0;
-
-                    if ($idProductoLinea > 0 && $cantidadLinea > 0) {
-                        $stmtDescontar->execute([':cantidad' => $cantidadLinea, ':idProducto' => $idProductoLinea]);
-                        $stmtCosto->execute([':idProducto' => $idProductoLinea]);
-                        $linea['costoUnitario'] = $stmtCosto->fetchColumn();
-                    }
-                }
-                unset($linea);
-
-                $productosActualizados = json_encode($lineas, JSON_UNESCAPED_UNICODE);
-
-                $sqlUpdatePedido = "UPDATE pedidos SET estado = :estado, productos = :productos, facturadoPor = :facturadoPor, facturadoAt = NOW() WHERE idPedido = :idPedido";
-                $sentenciaUpdatePedido = $conexion->prepare($sqlUpdatePedido);
-                $sentenciaUpdatePedido->bindParam(':estado', $nuevoEstado);
-                $sentenciaUpdatePedido->bindParam(':productos', $productosActualizados);
-                $sentenciaUpdatePedido->bindParam(':facturadoPor', $_SESSION['usuario_id'], PDO::PARAM_INT);
-                $sentenciaUpdatePedido->bindParam(':idPedido', $idPedido, PDO::PARAM_INT);
-            } else {
-                $sqlUpdatePedido = "UPDATE pedidos SET estado = :estado WHERE idPedido = :idPedido";
-                $sentenciaUpdatePedido = $conexion->prepare($sqlUpdatePedido);
-                $sentenciaUpdatePedido->bindParam(':estado', $nuevoEstado);
-                $sentenciaUpdatePedido->bindParam(':idPedido', $idPedido, PDO::PARAM_INT);
+            if ($producto === null) {
+                $faltantes[] = "El producto #$idProducto ya no existe en el catálogo";
+                continue;
             }
 
-            $sentenciaUpdatePedido->execute();
-            $conexion->commit();
-            echo json_encode(["mensaje" => "Estado del pedido actualizado correctamente"]);
-        } catch (Exception $errorTransaccion) {
-            $conexion->rollBack();
-            echo json_encode(["error" => "Error al actualizar el estado del pedido: " . $errorTransaccion->getMessage()]);
+            if ($producto['stock'] !== null && (int) $producto['stock'] < $cantidad) {
+                $faltantes[] = sprintf(
+                    '%s: pedidas %d, disponibles %d',
+                    $producto['titulo'],
+                    $cantidad,
+                    (int) $producto['stock']
+                );
+            }
         }
-        exit;
+
+        if ($faltantes !== []) {
+            $conexion->rollBack();
+            respondJson([
+                'error' => 'No se puede facturar por falta de stock',
+                'faltantes' => $faltantes,
+            ], 409);
+        }
+
+        $stmtDescontar = $conexion->prepare(
+            'UPDATE productos SET stock = stock - :cantidad WHERE idProducto = :idProducto AND stock IS NOT NULL'
+        );
+
+        foreach ($cantidades as $idProducto => $cantidad) {
+            $producto = $productos[$idProducto];
+
+            if ($producto['stock'] === null) {
+                continue; // producto sin inventario: no se mueve
+            }
+
+            $stmtDescontar->execute([':cantidad' => $cantidad, ':idProducto' => $idProducto]);
+
+            $movimientos[] = [
+                'titulo' => $producto['titulo'],
+                'antes' => (int) $producto['stock'],
+                'despues' => (int) $producto['stock'] - $cantidad,
+            ];
+        }
+
+        // Se congela el costo de cada línea al facturar, para que el reporte de
+        // ganancias no dependa del costo que tenga el producto más adelante.
+        $lineas = json_decode((string) $pedido['productos'], true) ?: [];
+        foreach ($lineas as &$linea) {
+            $idProducto = isset($linea['idProducto']) ? (int) $linea['idProducto'] : 0;
+            if (isset($productos[$idProducto])) {
+                $linea['costoUnitario'] = $productos[$idProducto]['costo'];
+            }
+        }
+        unset($linea);
+
+        $stmtUpdate = $conexion->prepare(
+            'UPDATE pedidos
+                SET estado = :estado, productos = :productos, facturadoPor = :facturadoPor, facturadoAt = NOW()
+              WHERE idPedido = :idPedido'
+        );
+        $stmtUpdate->execute([
+            ':estado' => $nuevoEstado,
+            ':productos' => json_encode($lineas, JSON_UNESCAPED_UNICODE),
+            ':facturadoPor' => $_SESSION['usuario_id'],
+            ':idPedido' => $idPedido,
+        ]);
+    } elseif ($revertir) {
+        $stmtDevolver = $conexion->prepare(
+            'UPDATE productos SET stock = stock + :cantidad WHERE idProducto = :idProducto AND stock IS NOT NULL'
+        );
+
+        foreach ($cantidades as $idProducto => $cantidad) {
+            $producto = $productos[$idProducto] ?? null;
+
+            if ($producto === null || $producto['stock'] === null) {
+                continue;
+            }
+
+            $stmtDevolver->execute([':cantidad' => $cantidad, ':idProducto' => $idProducto]);
+
+            $movimientos[] = [
+                'titulo' => $producto['titulo'],
+                'antes' => (int) $producto['stock'],
+                'despues' => (int) $producto['stock'] + $cantidad,
+            ];
+        }
+
+        // Deja de estar facturado: se limpia la marca para que no quede en los
+        // reportes como una venta cerrada.
+        $stmtUpdate = $conexion->prepare(
+            'UPDATE pedidos SET estado = :estado, facturadoPor = NULL, facturadoAt = NULL WHERE idPedido = :idPedido'
+        );
+        $stmtUpdate->execute([':estado' => $nuevoEstado, ':idPedido' => $idPedido]);
     } else {
-        echo json_encode(["error" => "Método no permitido"]);
+        $stmtUpdate = $conexion->prepare('UPDATE pedidos SET estado = :estado WHERE idPedido = :idPedido');
+        $stmtUpdate->execute([':estado' => $nuevoEstado, ':idPedido' => $idPedido]);
     }
+
+    $conexion->commit();
+
+    if ($facturar) {
+        $mensaje = $movimientos === []
+            ? 'Pedido facturado (ningún producto tenía stock cargado)'
+            : 'Pedido facturado y stock descontado';
+    } elseif ($revertir) {
+        $mensaje = $movimientos === []
+            ? "Pedido marcado como $nuevoEstado"
+            : "Pedido marcado como $nuevoEstado y stock devuelto al inventario";
+    } else {
+        $mensaje = "Pedido marcado como $nuevoEstado";
+    }
+
+    respondJson([
+        'mensaje' => $mensaje,
+        'estado' => $nuevoEstado,
+        'stockActualizado' => $facturar || $revertir,
+        'movimientos' => $movimientos,
+    ]);
 } catch (PDOException $error) {
-    echo json_encode(["error" => "Error de conexión: " . $error->getMessage()]);
+    if ($conexion->inTransaction()) {
+        $conexion->rollBack();
+    }
+
+    $detalle = esLocal() || env('DEBUG') === 'true' ? ': ' . $error->getMessage() : '';
+    respondJson(['error' => 'No se pudo actualizar el pedido' . $detalle], 500);
 }

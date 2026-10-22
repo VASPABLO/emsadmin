@@ -31,7 +31,12 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    animation: dashFadeUp 0.4s ease both;
+    /* 'backwards' y no 'both': con 'both' el transform del último keyframe
+       queda aplicado para siempre, y un elemento con transform pasa a ser el
+       bloque contenedor de sus hijos position: fixed. Eso hacía que los modales
+       se centraran dentro de la tabla (miles de px de alto) en vez de dentro de
+       la ventana, y aparecieran corridos hacia abajo. */
+    animation: dashFadeUp 0.4s ease backwards;
 }
 
 .dashboardMain__row {

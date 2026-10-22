@@ -100,17 +100,31 @@ export default function PedidosData() {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    Swal.fire(
-                        'Error!',
-                        data.error,
-                        'error'
-                    );
+                    // Al facturar sin stock el backend devuelve qué producto falta.
+                    const faltantes = (data.faltantes || [])
+                        .map(linea => `<li>${linea}</li>`)
+                        .join('');
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        html: faltantes
+                            ? `${data.error}:<ul style="text-align:left;margin-top:.6rem">${faltantes}</ul>`
+                            : data.error,
+                    });
                 } else {
-                    Swal.fire(
-                        'Editado!',
-                        data.mensaje,
-                        'success'
-                    );
+                    // Si el cambio movió inventario, se muestra el antes y después.
+                    const movimientos = (data.movimientos || [])
+                        .map(m => `<li>${m.titulo}: ${m.antes} → ${m.despues}</li>`)
+                        .join('');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Editado!',
+                        html: movimientos
+                            ? `${data.mensaje}:<ul style="text-align:left;margin-top:.6rem">${movimientos}</ul>`
+                            : data.mensaje,
+                    });
                     cargarPedidos();
                     cerrarModal();
                 }
@@ -345,24 +359,19 @@ export default function PedidosData() {
     const resumenEstados = filtrados.reduce(
         (acc, item) => {
             const estado = item?.estado || '';
-            if (estado === 'Pendiente') acc.pendientes += 1;
-            if (estado === 'Pagado') acc.pagados += 1;
-            if (estado === 'Entregado') acc.entregados += 1;
-            if (estado === 'Rechazado') acc.rechazados += 1;
+            if (estado === 'En proceso') acc.enProceso += 1;
+            if (estado === 'Facturado') acc.facturados += 1;
+            if (estado === 'Cancelado') acc.cancelados += 1;
             return acc;
         },
-        { pendientes: 0, pagados: 0, entregados: 0, rechazados: 0 }
+        { enProceso: 0, facturados: 0, cancelados: 0 }
     );
 
     const getEstadoClass = (estado) => {
         const estadoNormalizado = (estado || '').toLowerCase();
-        if (estadoNormalizado === 'pendiente') return 'estadoBadge pendiente';
-        if (estadoNormalizado === 'entregado') return 'estadoBadge entregado';
-        if (estadoNormalizado === 'rechazado') return 'estadoBadge rechazado';
-        if (estadoNormalizado === 'pagado') return 'estadoBadge pagado';
         if (estadoNormalizado === 'en proceso') return 'estadoBadge enProceso';
-        if (estadoNormalizado === 'recibido') return 'estadoBadge recibido';
         if (estadoNormalizado === 'facturado') return 'estadoBadge facturado';
+        if (estadoNormalizado === 'cancelado') return 'estadoBadge cancelado';
         return 'estadoBadge';
     };
 
@@ -383,12 +392,16 @@ export default function PedidosData() {
                         <strong>{filtrados.length}</strong>
                     </div>
                     <div className='statCard'>
-                        <span>Pendientes</span>
-                        <strong>{resumenEstados.pendientes}</strong>
+                        <span>En proceso</span>
+                        <strong>{resumenEstados.enProceso}</strong>
                     </div>
                     <div className='statCard'>
-                        <span>Pagados</span>
-                        <strong>{resumenEstados.pagados}</strong>
+                        <span>Facturados</span>
+                        <strong>{resumenEstados.facturados}</strong>
+                    </div>
+                    <div className='statCard'>
+                        <span>Cancelados</span>
+                        <strong>{resumenEstados.cancelados}</strong>
                     </div>
                 </div>
             </div>
@@ -415,13 +428,9 @@ export default function PedidosData() {
                     <div className='inputsColumn'>
                         <select value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
                             <option value="">Estado</option>
-                            <option value="Entregado">Entregado</option>
-                            <option value="Rechazado">Rechazado</option>
-                            <option value="Pagado">Pagado</option>
-                            <option value="Pendiente">Pendiente</option>
                             <option value="En proceso">En proceso</option>
-                            <option value="Recibido">Recibido</option>
                             <option value="Facturado">Facturado</option>
+                            <option value="Cancelado">Cancelado</option>
                         </select>
                     </div>
                     <button className='reload' onClick={recargarProductos}><FontAwesomeIcon icon={faSync} /></button>
@@ -605,22 +614,9 @@ export default function PedidosData() {
                                         value={nuevoEstado !== '' ? nuevoEstado : pedido.estado}
                                         onChange={(e) => setNuevoEstado(e.target.value)}
                                     >
-                                        <option value={pedido.estado}>{pedido.estado}</option>
-                                        {pedido.origen === 'interno' ? (
-                                            <>
-                                                <option value="Pendiente">Pendiente</option>
-                                                <option value="En proceso">En proceso</option>
-                                                <option value="Recibido">Recibido</option>
-                                                <option value="Facturado">Facturado</option>
-                                                <option value="Rechazado">Rechazado</option>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <option value="Entregado">Entregado</option>
-                                                <option value="Rechazado">Rechazado</option>
-                                                <option value="Pagado">Pagado</option>
-                                            </>
-                                        )}
+                                        <option value="En proceso">En proceso</option>
+                                        <option value="Facturado">Facturado</option>
+                                        <option value="Cancelado">Cancelado</option>
                                     </select>
                                 </fieldset>
                                 {pedido.origen === 'interno' && pedido.facturadoAt && (

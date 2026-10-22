@@ -27,8 +27,15 @@ vendor/
 public/vendor/
 
 # Archivos de entorno
+# Se ignora todo lo que tenga credenciales o sea propio de una máquina/servidor...
 .env
 .env.*
+.env.backup
+# ...pero sí se versionan las plantillas y la config por entorno (sin secretos):
+!.env.example
+!.env.development
+!.env.production
+!.env.test
 
 # Salidas de compilación adicionales
 public/build/

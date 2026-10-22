@@ -11,6 +11,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
+import '../adminTables.css';
 import './CategoriasData.css';
 import 'jspdf-autotable';
 import baseURL from '../../url';

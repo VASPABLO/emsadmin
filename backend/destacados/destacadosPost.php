@@ -3,14 +3,7 @@ require __DIR__ . '/../config/bootstrap.php';
 
 requireRole(['admin']);
 
-$rutaweb = isset($_ENV['RUTA_WEB']) ? trim($_ENV['RUTA_WEB']) : '';
-if ($rutaweb === '') {
-    $https = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-    $scheme = $https ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $rutaweb = $scheme . '://' . $host;
-}
-$rutaweb = rtrim($rutaweb, '/');
+$rutaweb = rutaWeb();
 
 try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {

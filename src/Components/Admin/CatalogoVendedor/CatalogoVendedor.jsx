@@ -39,6 +39,24 @@ export default function CatalogoVendedor() {
     useEffect(() => {
         cargarProductos();
         cargarCategorias();
+
+        // El stock cambia cuando la cajera factura un pedido, en otra pantalla.
+        // Al volver a esta pestaña se recargan los productos para que
+        // "Disponible" muestre el número real y no uno viejo.
+        const refrescarSiVuelve = () => {
+            if (document.visibilityState === 'visible') {
+                cargarProductos();
+            }
+        };
+
+        window.addEventListener('focus', refrescarSiVuelve);
+        document.addEventListener('visibilitychange', refrescarSiVuelve);
+
+        return () => {
+            window.removeEventListener('focus', refrescarSiVuelve);
+            document.removeEventListener('visibilitychange', refrescarSiVuelve);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Autocompletar cliente: al escribir un teléfono (8+ dígitos) o un email válido,

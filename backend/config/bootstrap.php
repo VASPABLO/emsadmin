@@ -1,20 +1,27 @@
 <?php
 
+require_once __DIR__ . '/env.php';
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 header('Content-Type: application/json');
 
-$allowedOrigins = [
-    'https://emscrsoluciones.com',
-    'https://www.emscrsoluciones.com',
-    'http://localhost:3000',
-    'http://localhost:3001',
-];
+$origin = rtrim($_SERVER['HTTP_ORIGIN'] ?? '', '/');
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowedOrigins, true)) {
+// En producción solo se aceptan los dominios declarados (corsOrigins()).
+// En local se acepta además cualquier puerto de localhost/127.0.0.1 y cualquier
+// host .test, para que el servidor de desarrollo de React (puerto 3000, 3001, etc.)
+// o un vhost de Laragon funcionen sin tocar esta lista.
+$permitido = $origin !== '' && in_array($origin, corsOrigins(), true);
+
+if (!$permitido && $origin !== '' && esLocal()) {
+    $permitido = preg_match('#^https?://(localhost|127\.0\.0\.1)(:\d+)?$#i', $origin) === 1
+        || preg_match('#^https?://[a-z0-9.\-]+\.(test|local|localhost)(:\d+)?$#i', $origin) === 1;
+}
+
+if ($permitido) {
     header("Access-Control-Allow-Origin: $origin");
     header('Vary: Origin');
 }
@@ -45,5 +52,8 @@ function requireRole(array $rolesPermitidos): void
 try {
     require __DIR__ . '/database.php';
 } catch (PDOException $error) {
-    respondJson(['error' => 'Error de conexión: ' . $error->getMessage()], 500);
+    // En producción no se filtra el detalle del error de conexión,
+    // salvo que se ponga DEBUG=true en el .env para diagnosticar.
+    $detalle = (esLocal() || env('DEBUG') === 'true') ? ': ' . $error->getMessage() : '';
+    respondJson(['error' => 'Error de conexión' . $detalle], 500);
 }

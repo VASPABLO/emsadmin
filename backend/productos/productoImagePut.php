@@ -3,7 +3,7 @@ require __DIR__ . '/../config/bootstrap.php';
 
 requireRole(['admin']);
 
-$rutaweb = rtrim($_ENV['RUTA_WEB'] ?? '', '/');
+$rutaweb = rutaWeb();
 $carpetaImagenes = __DIR__ . '/../imagenes_productos';
 
 try {

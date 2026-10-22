@@ -1,0 +1,112 @@
+/* Botones de la barra de acciones de Productos. Siguen la misma forma que
+   .excel / .pdf / .reload, definidos en ProductosData.css. */
+.plantilla,
+.importar {
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 12px;
+  padding: 0.72rem 0.9rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.plantilla {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.plantilla:hover {
+  background: #f1f5f9;
+}
+
+.importar {
+  background: #0c71cf;
+  color: #ffffff;
+  border-color: #0c71cf;
+}
+
+.importar:hover {
+  background: #0a5fae;
+}
+
+/* El modal de importación necesita más alto que el de categorías porque abajo
+   va el reporte fila por fila. */
+.importarModal {
+  max-width: 680px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.importarModal .adminModal__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.importarModal input[type='file'] {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px dashed rgba(15, 23, 42, 0.2);
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #334155;
+  cursor: pointer;
+}
+
+.importarHint {
+  color: #64748b;
+  font-size: 0.86rem;
+}
+
+.importarAviso {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.importarAviso > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.88rem;
+}
+
+.importarLista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+.importarLista--error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.importarLista strong {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: inherit;
+}
+
+.importarLista ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}

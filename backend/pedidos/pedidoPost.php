@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $estado = isset($_POST['estado']) ? trim((string) $_POST['estado']) : 'Pendiente';
+    $estado = isset($_POST['estado']) ? trim((string) $_POST['estado']) : 'En proceso';
     $productosRaw = isset($_POST['productos']) ? trim((string) $_POST['productos']) : '';
     $total = isset($_POST['total']) ? trim((string) $_POST['total']) : '';
     $nombre = isset($_POST['nombre']) ? trim((string) $_POST['nombre']) : '';

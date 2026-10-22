@@ -13,6 +13,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
+import '../adminTables.css';
 import './ProductosData.css';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -20,6 +21,7 @@ import 'jspdf-autotable';
 import baseURL from '../../url';
 import apiFetch from '../../apiFetch';
 import NewProduct from '../NewProduct/NewProduct';
+import ImportarProductos from '../ImportarProductos/ImportarProductos';
 import { Link as Anchor } from "react-router-dom";
 
 export default function ProductosData() {
@@ -348,6 +350,7 @@ export default function ProductosData() {
                 </div>
 
                 <div className='productosAdmin__actions'>
+                    <ImportarProductos categorias={categorias} onImported={cargarProductos} />
                     <button className='excel' onClick={descargarExcel}><FontAwesomeIcon icon={faArrowDown} /> Excel</button>
                     <button className='pdf' onClick={descargarPDF}><FontAwesomeIcon icon={faArrowDown} /> PDF</button>
                     <button className='reload' onClick={recargarProductos}><FontAwesomeIcon icon={faSync} /> Recargar</button>
@@ -424,7 +427,7 @@ export default function ProductosData() {
 
             {modalVisible && (
                 <div className="modal">
-                    <div className="modal-content">
+                    <div className="modal-content modalEditarProducto">
                         <div className='deFlexBtnsModal'>
 
                             <div className='deFlexBtnsModal'>
@@ -449,24 +452,12 @@ export default function ProductosData() {
                         </div>
                         <div className='sectiontext' style={{ display: selectedSection === 'texto' ? 'flex' : 'none' }}>
                             <div className='flexGrap'>
-                                <fieldset>
+                                <fieldset className='fieldsetTitulo'>
                                     <legend>Titulo</legend>
                                     <input
                                         type="text"
                                         value={nuevoTitulo !== '' ? nuevoTitulo : producto.titulo}
                                         onChange={(e) => setNuevoTitulo(e.target.value)}
-                                        autoComplete='off'
-                                        autoCorrect='off'
-                                        autoCapitalize='off'
-                                        spellCheck='false'
-                                    />
-                                </fieldset>
-                                <fieldset id='descripcion'>
-                                    <legend>Descripcion</legend>
-                                    <textarea
-                                        type="text"
-                                        value={nuevaDescripcion}
-                                        onChange={(e) => setNuevaDescripcion(e.target.value)}
                                         autoComplete='off'
                                         autoCorrect='off'
                                         autoCapitalize='off'
@@ -487,6 +478,19 @@ export default function ProductosData() {
                                             ))
                                         }
                                     </select>
+                                </fieldset>
+
+                                <fieldset id='descripcion'>
+                                    <legend>Descripcion</legend>
+                                    <textarea
+                                        type="text"
+                                        value={nuevaDescripcion}
+                                        onChange={(e) => setNuevaDescripcion(e.target.value)}
+                                        autoComplete='off'
+                                        autoCorrect='off'
+                                        autoCapitalize='off'
+                                        spellCheck='false'
+                                    />
                                 </fieldset>
 
                                 <fieldset>
@@ -604,67 +608,106 @@ export default function ProductosData() {
                 </div>
             )}
 
-            <div className='table-container'>
-                <div className='tableHeaderLite'>
+            <div className='adminTableCard'>
+                <div className='adminTableCard__header'>
                     <h3><FontAwesomeIcon icon={faTableCellsLarge} /> Tabla de productos</h3>
                     <p>Puedes editar, eliminar o previsualizar cada producto.</p>
                 </div>
 
-                <table className='table'>
-                    <thead>
-                        <tr>
-                            <th>Id Producto</th>
-                            <th>Titulo</th>
-                            <th>Categoria</th>
-                            <th>Imagen</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {productosFiltrados.map(item => (
-                            <tr key={item.idProducto}>
-                                <td>{item.idProducto}</td>
-                                <td>{item.titulo}</td>
-
-                                {categorias
-                                    .filter(categoriaFiltrada => categoriaFiltrada.idCategoria === item.idCategoria)
-                                    .map(categoriaFiltrada => (
-                                        <td
-                                            key={categoriaFiltrada.idCategoria}
-                                            style={{ color: '#DAA520' }}
-                                        >
-                                            {categoriaFiltrada.categoria}
-                                        </td>
-                                    ))
-                                }
-
-                                <td>
-                                    {item.imagen1 ? (
-                                        <img src={item.imagen1} alt="imagen1" />
-                                    ) : (
-                                        <span className='imgNonetd'>
-                                            Sin imagen
-                                        </span>
-                                    )}
-                                </td>
-
-                                <td>
-
-                                    <button className='eliminar' onClick={() => eliminarProducto(item.idProducto)}>
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </button>
-                                    <button className='editar' onClick={() => abrirModal(item)}>
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </button>
-                                    <Anchor className='editar' to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}>
-                                        <FontAwesomeIcon icon={faEye} />
-                                    </Anchor>
-                                </td>
+                <div className='table-responsive'>
+                    <table className='modernTable'>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock</th>
+                                <th className='align-right'>Acciones</th>
                             </tr>
-                        ))}
-                    </tbody>
+                        </thead>
 
-                </table>
+                        <tbody>
+                            {productosFiltrados.length === 0 ? (
+                                <tr>
+                                    <td colSpan='5' className='tableState'>No hay productos para mostrar.</td>
+                                </tr>
+                            ) : productosFiltrados.map(item => {
+                                // Se resuelve acá y no con un filter+map que renderiza celdas:
+                                // si la categoría ya no existe, la fila se desalineaba.
+                                const categoria = categorias.find(c => c.idCategoria === item.idCategoria);
+
+                                return (
+                                    <tr key={item.idProducto}>
+                                        <td>
+                                            <span className='idBadge'>#{item.idProducto}</span>
+                                        </td>
+
+                                        <td>
+                                            <div className='cellWithIcon'>
+                                                {item.imagen1 ? (
+                                                    <img
+                                                        className='cellThumb'
+                                                        src={item.imagen1}
+                                                        alt={item.titulo}
+                                                        onClick={() => abrirModalImagenSeleccionada(item.imagen1)}
+                                                    />
+                                                ) : (
+                                                    <span className='cellThumb cellThumb--empty'>
+                                                        <FontAwesomeIcon icon={faBoxOpen} />
+                                                    </span>
+                                                )}
+
+                                                <div>
+                                                    <strong>{item.titulo}</strong>
+                                                    <span>{item.imagen1 ? 'Con imagen' : 'Sin imagen'}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td>{categoria ? categoria.categoria : 'Sin categoría'}</td>
+
+                                        <td>
+                                            {/* El stock baja solo cuando la cajera factura el pedido. */}
+                                            {item.stock === null || item.stock === '' || item.stock === undefined ? (
+                                                <span className='stockBadge stockBadge--sinControl'>Sin control</span>
+                                            ) : (
+                                                <span
+                                                    className={`stockBadge ${Number(item.stock) <= 0
+                                                        ? 'stockBadge--agotado'
+                                                        : Number(item.stock) <= Number(item.stockMinimo || 0)
+                                                            ? 'stockBadge--bajo'
+                                                            : ''}`}
+                                                >
+                                                    {item.stock}
+                                                </span>
+                                            )}
+                                        </td>
+
+                                        <td className='align-right'>
+                                            <div className='tableActions'>
+                                                <Anchor
+                                                    className='tableBtn tableBtn--view'
+                                                    to={`/producto/${item?.idProducto}/${item?.titulo?.replace(/\s+/g, '-')}`}
+                                                    title='Ver producto'
+                                                >
+                                                    <FontAwesomeIcon icon={faEye} />
+                                                </Anchor>
+
+                                                <button className='tableBtn tableBtn--edit' type='button' onClick={() => abrirModal(item)} title='Editar producto'>
+                                                    <FontAwesomeIcon icon={faEdit} />
+                                                </button>
+
+                                                <button className='tableBtn tableBtn--delete' type='button' onClick={() => eliminarProducto(item.idProducto)} title='Eliminar producto'>
+                                                    <FontAwesomeIcon icon={faTrash} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
     );
