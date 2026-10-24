@@ -44,8 +44,10 @@ export default function Navbar() {
     ].filter((item) => item.roles.includes(usuario?.rol));
 
     const isActive = (path) => {
-        return location.pathname === path;
+        return location.pathname.replace(/\/+$/, '') === path;
     };
+
+    const paginaActual = menuItems.find((item) => isActive(item.to))?.label || 'Panel Admin';
 
     useEffect(() => {
         setIsSidebarOpen(false);
@@ -53,15 +55,26 @@ export default function Navbar() {
 
     return (
         <>
-            <button
-                type="button"
-                className="sidebarToggleBtn"
-                onClick={() => setIsSidebarOpen((prev) => !prev)}
-                aria-label={isSidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
-                aria-expanded={isSidebarOpen}
-            >
-                <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
-            </button>
+            {/* Barra superior: solo visible en tablet/móvil, donde el menú lateral se oculta. */}
+            <header className="dashTopbar">
+                <button
+                    type="button"
+                    className="sidebarToggleBtn"
+                    onClick={() => setIsSidebarOpen((prev) => !prev)}
+                    aria-label={isSidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
+                    aria-expanded={isSidebarOpen}
+                >
+                    <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
+                </button>
+
+                <Anchor to="/dashboard" className="dashTopbar__brand">
+                    <img src={logo} alt="Logo EMS" />
+                    <div className="dashTopbar__text">
+                        <span>EMS Soluciones</span>
+                        <strong>{paginaActual}</strong>
+                    </div>
+                </Anchor>
+            </header>
 
             {isSidebarOpen && (
                 <button

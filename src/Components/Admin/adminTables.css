@@ -196,26 +196,57 @@
 }
 
 /* En pantallas chicas la tabla pasa a tarjetas apiladas. */
+/* Móvil: cada fila pasa a ser una tarjeta compacta.
+   Fila 1: #ID | nombre (con imagen/ícono)
+   Fila 2: el resto de columnas (en Productos: categoría | stock | acciones).
+   Si la tabla tiene solo 3 columnas (Categorías), todo entra en una fila. */
 @media (max-width: 680px) {
   .modernTable thead {
     display: none;
   }
 
   .modernTable,
-  .modernTable tbody,
-  .modernTable tr,
-  .modernTable td {
+  .modernTable tbody {
     display: block;
     width: 100%;
   }
 
   .modernTable tbody tr {
-    padding: 0.8rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.65rem;
+    padding: 0.8rem 1rem;
   }
 
   .modernTable tbody td {
+    display: block;
     border-bottom: none;
-    padding: 0.45rem 1rem;
+    padding: 0;
+    min-width: 0;
+  }
+
+  /* El nombre ocupa el resto de la fila 1, empujando lo demás a la fila 2. */
+  .modernTable tbody td:nth-child(2) {
+    flex: 1 1 calc(100% - 4.5rem);
+  }
+
+  .modernTable tbody td:nth-child(2):nth-last-child(2) {
+    flex-basis: 0;
+  }
+
+  .modernTable tbody td:nth-child(3):not(:last-child) {
+    flex: 1 1 3.5rem;
+    color: #64748b;
+    font-size: 0.85rem;
+  }
+
+  .modernTable tbody td:last-child:not(:first-child) {
+    margin-left: auto;
+  }
+
+  .modernTable tbody td[colspan] {
+    flex: 1 1 100%;
   }
 
   .align-right {
@@ -223,7 +254,7 @@
   }
 
   .tableActions {
-    margin-top: 0.4rem;
+    margin-top: 0;
   }
 }
 
@@ -256,4 +287,98 @@
   color: #64748b;
   font-weight: 600;
   font-size: 0.8rem;
+}
+
+/* Tablas que en móvil pasan a tarjetas (Usuarios, Contacto, Pedidos).
+   Cada <td> lleva data-label con el nombre de la columna, que se muestra a la
+   izquierda del valor. La celda de acciones va con .tableCards__actions.
+   Los selectores llevan .table para ganarle a los anchos fijos por columna y
+   al min-width: 720px que ProductosData.css le pone a .table en móvil. */
+@media (max-width: 700px) {
+  .table-container:has(.tableCards) {
+    overflow: visible;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .table.tableCards {
+    min-width: 0;
+    table-layout: auto;
+  }
+
+  .table.tableCards thead {
+    display: none;
+  }
+
+  .table.tableCards,
+  .table.tableCards tbody,
+  .table.tableCards tr,
+  .table.tableCards td {
+    display: block;
+    width: auto;
+  }
+
+  .table.tableCards tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .table.tableCards tbody tr {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  }
+
+  .table.tableCards tbody td,
+  .table.tableCards tbody td:nth-child(n) {
+    width: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.32rem 0;
+    border: none;
+    background: transparent;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: right;
+    font-size: 0.9rem;
+  }
+
+  .table.tableCards tbody td[data-label]::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .table.tableCards tbody td:empty {
+    display: none;
+  }
+
+  .table.tableCards tbody td.tableCards__actions {
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid #eef2f7;
+  }
+
+  .table.tableCards .tableCards__actions .eliminar,
+  .table.tableCards .tableCards__actions .editar {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .table.tableCards tbody td[colspan] {
+    justify-content: center;
+    text-align: center;
+  }
 }

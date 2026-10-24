@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import '../adminTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -153,7 +154,7 @@ export default function ContactoData() {
             )}
 
             <div className='table-container'>
-                <table className='table'>
+                <table className='table tableCards'>
                     <thead>
                         <tr>
                             <th>Id Contacto</th>
@@ -170,14 +171,14 @@ export default function ContactoData() {
                     <tbody>
                         {contactos.map((item) => (
                             <tr key={item.idContacto}>
-                                <td>{item.idContacto}</td>
-                                <td>{item.nombre}</td>
-                                <td>{item.telefono}</td>
-                                <td>{item.instagram}</td>
-                                <td>{item.facebook}</td>
-                                <td>{item.email}</td>
-                                <td>{item.direccion}</td>
-                                <td>
+                                <td data-label='ID'>{item.idContacto}</td>
+                                <td data-label='Nombre'>{item.nombre}</td>
+                                <td data-label='Teléfono'>{item.telefono}</td>
+                                <td data-label='Instagram'>{item.instagram}</td>
+                                <td data-label='Facebook'>{item.facebook}</td>
+                                <td data-label='Email'>{item.email}</td>
+                                <td data-label='Dirección'>{item.direccion}</td>
+                                <td className='tableCards__actions'>
                                     <button className='eliminar' onClick={() => eliminarContacto(item.idContacto)}>
                                         <FontAwesomeIcon icon={faTrash} />
                                     </button>

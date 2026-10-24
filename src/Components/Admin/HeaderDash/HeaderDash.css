@@ -76,15 +76,18 @@
 }
 
 @media (max-width: 1024px) {
-    .HeaderDashContain {
-        flex-direction: column;
-        align-items: stretch;
+    .HeaderDashContain .inputSearchDashboard {
+        flex: 1;
+        min-width: 0;
     }
 
     .deFlexHeader {
-        justify-content: space-between;
         gap: 0.5rem;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+    }
+
+    .homeSessionText {
+        display: none;
     }
 
     .homeSessionBtn {
@@ -105,5 +108,78 @@
 
     .homeSessionText span {
         font-size: 0.7rem;
+    }
+}
+
+/* Móvil: todo en una sola fila (buscador + accesos solo con ícono) para que el
+   encabezado no se coma media pantalla antes del contenido. */
+@media (max-width: 768px) {
+    .HeaderDashContain {
+        flex-direction: row;
+        align-items: center;
+        padding: 0.45rem;
+        border-radius: 18px;
+        gap: 0.45rem;
+    }
+
+    .HeaderDashContain .inputSearchDashboard {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .HeaderDashContain .searchDashboardBox {
+        min-height: 44px;
+        border-radius: 14px;
+        box-shadow: none;
+    }
+
+    .deFlexHeader {
+        flex-wrap: nowrap;
+        gap: 0.35rem;
+    }
+
+    /* Pantalla completa no aplica en el celular, e "Instalar" solo se muestra
+       cuando el navegador realmente permite instalar la app. */
+    .HeaderDashContain .FullScreenButton,
+    .HeaderDashContain .btnInstall:disabled {
+        display: none;
+    }
+
+    .HeaderDashContain .homeSessionText,
+    .HeaderDashContain .userInfoText {
+        display: none;
+    }
+
+    .HeaderDashContain .homeSessionBtn,
+    .HeaderDashContain .btn-sesion,
+    .HeaderDashContain .loadingUserSession {
+        min-height: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .HeaderDashContain .homeSessionAvatar,
+    .HeaderDashContain .userAvatar {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        box-shadow: none;
+    }
+
+    .HeaderDashContain .homeSessionAvatar {
+        background: #eef4fb;
+        color: #0c71cf;
+    }
+
+    .HeaderDashContain .userTextSkeleton {
+        display: none;
+    }
+
+    .HeaderDashContain .btnInstall {
+        min-height: 40px;
+        padding: 0.4rem 0.7rem;
+        font-size: 0.82rem;
     }
 }

@@ -42,3 +42,24 @@
     padding: 0.2rem;
     flex-shrink: 0;
 }
+
+@media (max-width: 768px) {
+    .alertaStockBajo {
+        padding: 0.65rem 0.75rem;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+    }
+
+    .alertaStockBajo__texto {
+        flex-basis: calc(100% - 4rem);
+        font-size: 0.82rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .alertaStockBajo__link {
+        margin-left: 1.65rem;
+    }
+}

@@ -852,3 +852,69 @@
     background: #cbd5e1;
     cursor: not-allowed;
 }
+
+/* Móvil: catálogo en 2 columnas con tarjetas compactas, para que el vendedor
+   vea varios productos a la vez en lugar de uno por pantalla. */
+@media (max-width: 600px) {
+    .catalogoVendedor__lista {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+        padding: 0;
+    }
+
+    .catalogoVendedor__card {
+        border-radius: 16px;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+    }
+
+    .catalogoVendedor__card:hover {
+        transform: none;
+    }
+
+    .catalogoVendedor__cardImage {
+        height: 120px;
+    }
+
+    .catalogoVendedor__cardBadge {
+        left: 8px;
+        top: 8px;
+        max-width: calc(100% - 16px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.64rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .catalogoVendedor__cardBody {
+        padding: 0.7rem;
+    }
+
+    .catalogoVendedor__cardBody h4 {
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .catalogoVendedor__cardDesc {
+        display: none;
+    }
+
+    .catalogoVendedor__precio {
+        font-size: 0.95rem;
+    }
+
+    .catalogoVendedor__rango,
+    .catalogoVendedor__stock {
+        font-size: 0.68rem;
+    }
+
+    .catalogoVendedor__agregarBtn {
+        width: 38px;
+        height: 38px;
+    }
+}

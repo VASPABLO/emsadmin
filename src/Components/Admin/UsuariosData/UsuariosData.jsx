@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import '../adminTables.css';
+import './UsuariosData.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faArrowUp, faArrowDown, faSync } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -170,7 +172,7 @@ export default function UsuariosData() {
         setOrdenInvertido(!ordenInvertido);
     };
     return (
-        <div>
+        <div className='usuariosPanel'>
             <div className='deFlexContent'>
                 <div className='deFlex2'>
                     <Register />
@@ -205,8 +207,8 @@ export default function UsuariosData() {
                         </select>
                     </div>
 
-                    <button className='reload' onClick={recargarUsuarios}><FontAwesomeIcon icon={faSync} /></button>
-                    <button className='reverse' onClick={invertirOrden}>
+                    <button className='reload' onClick={recargarUsuarios} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
+                    <button className='reverse' onClick={invertirOrden} aria-label='Invertir orden' title='Invertir orden'>
                         {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
                     </button>
 
@@ -218,7 +220,7 @@ export default function UsuariosData() {
             <div className='table-container'>
                 <ToastContainer />
 
-                <table className='table'>
+                <table className='table tableCards'>
                     <thead>
                         <tr>
                             <th>ID Usuario</th>
@@ -232,10 +234,10 @@ export default function UsuariosData() {
                     <tbody>
                         {usuariosFiltrados.map(usuario => (
                             <tr key={usuario.idUsuario}>
-                                <td>{usuario.idUsuario}</td>
-                                <td>{usuario.nombre}</td>
-                                <td>{usuario.email}</td>
-                                <td style={{
+                                <td data-label='ID'>{usuario.idUsuario}</td>
+                                <td data-label='Nombre'>{usuario.nombre}</td>
+                                <td data-label='Email'>{usuario.email}</td>
+                                <td data-label='Rol' style={{
                                     color: usuario?.rol === 'usuario' ? '#DAA520'
                                         : usuario?.rol === 'admin' ? '#008000'
                                         : usuario?.rol === 'vendedor' ? '#1E90FF'
@@ -243,8 +245,8 @@ export default function UsuariosData() {
                                         : '#FF0000',
 
                                 }}>  {`${usuario?.rol}`}</td>
-                                <td>{usuario.createdAt}</td>
-                                <td>
+                                <td data-label='Creado'>{usuario.createdAt}</td>
+                                <td className='tableCards__actions'>
 
                                     <button className='eliminar' onClick={() => eliminarUsuario(usuario.idUsuario)}><FontAwesomeIcon icon={faTrash} /></button>
 

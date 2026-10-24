@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import '../adminTables.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faSync, faEye, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { ToastContainer, toast } from 'react-toastify';
@@ -415,10 +416,12 @@ export default function PedidosData() {
                 </div>
                 <div className='filtrosContain'>
                     <div className='inputsColumn'>
-                        <input type="date" value={filtroDesde} onChange={(e) => setFiltroDesde(e.target.value)} placeholder='Desde' />
+                        <label htmlFor='pedidosDesde'>Desde</label>
+                        <input id='pedidosDesde' type="date" value={filtroDesde} onChange={(e) => setFiltroDesde(e.target.value)} placeholder='Desde' />
                     </div>
                     <div className='inputsColumn'>
-                        <input type="date" value={filtroHasta} onChange={(e) => setFiltroHasta(e.target.value)} placeholder='Hasta' />
+                        <label htmlFor='pedidosHasta'>Hasta</label>
+                        <input id='pedidosHasta' type="date" value={filtroHasta} onChange={(e) => setFiltroHasta(e.target.value)} placeholder='Hasta' />
                     </div>
 
                     <div className='inputsColumn'>
@@ -433,8 +436,8 @@ export default function PedidosData() {
                             <option value="Cancelado">Cancelado</option>
                         </select>
                     </div>
-                    <button className='reload' onClick={recargarProductos}><FontAwesomeIcon icon={faSync} /></button>
-                    <button className='reverse' onClick={invertirOrden}>
+                    <button className='reload' onClick={recargarProductos} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
+                    <button className='reverse' onClick={invertirOrden} aria-label='Invertir orden' title='Invertir orden'>
                         {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
                     </button>
 
@@ -443,7 +446,7 @@ export default function PedidosData() {
             </div>
 
             <div className='table-container pedidosTableWrap'>
-                <table className='table'>
+                <table className='table tableCards'>
                     <thead>
                         <tr>
                             <th>Id Pedido</th>
@@ -462,19 +465,19 @@ export default function PedidosData() {
                     <tbody>
                         {filtrados.map(item => (
                             <tr key={item.idPedido}>
-                                <td>{item.idPedido}</td>
-                                <td>{item.origen === 'interno' ? 'Interno' : 'Web'}</td>
-                                <td>
+                                <td data-label='Pedido'>{item.idPedido}</td>
+                                <td data-label='Origen'>{item.origen === 'interno' ? 'Interno' : 'Web'}</td>
+                                <td data-label='Estado'>
                                     <span className={getEstadoClass(item?.estado)}>{item?.estado}</span>
                                 </td>
-                                <td>{item.nombre}</td>
-                                <td>{item.email}</td>
-                                <td>{item.telefono}</td>
-                                <td>{item.entrega}</td>
-                                <td>{item.pago}</td>
-                                <td style={{ color: '#008000', }}>{moneda} {item.total}</td>
-                                <td>{item.createdAt}</td>
-                                <td>
+                                <td data-label='Cliente'>{item.nombre}</td>
+                                <td data-label='Email'>{item.email}</td>
+                                <td data-label='Teléfono'>{item.telefono}</td>
+                                <td data-label='Entrega'>{item.entrega}</td>
+                                <td data-label='Pago'>{item.pago}</td>
+                                <td data-label='Total' style={{ color: '#008000', }}>{moneda} {item.total}</td>
+                                <td data-label='Fecha'>{item.createdAt}</td>
+                                <td className='tableCards__actions'>
 
                                     <button className='eliminar' onClick={() => eliminar(item.idPedido)}>
                                         <FontAwesomeIcon icon={faTrash} />

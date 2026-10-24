@@ -25,8 +25,14 @@
 
 .pedidosStats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(110px, 1fr));
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
   gap: 0.7rem;
+}
+
+/* ProductosData.css también define .statCard con min-width: 170px, y como el
+   CSS es global, eso hacía que las tarjetas se salieran de la pantalla. */
+.pedidosStats .statCard {
+  min-width: 0;
 }
 
 .statCard {
@@ -74,6 +80,16 @@
 
 .pedidosPanel .inputsColumn {
   min-width: 140px;
+}
+
+.pedidosPanel .filtrosContain {
+  align-items: flex-end;
+}
+
+.pedidosPanel .inputsColumn label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #64748b;
 }
 
 .pedidosPanel .inputsColumn input,
@@ -450,6 +466,60 @@
   .pedidosPanel .inputsColumn {
     min-width: 0;
     width: 100%;
+  }
+
+  .pedidosStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .pedidosHeader h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Filtros en 2 columnas: Desde | Hasta, Id | Estado, Recargar | Orden. */
+  .pedidosPanel .filtrosContain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+  }
+
+  .pedidosPanel .filtrosContain .reload,
+  .pedidosPanel .filtrosContain .reverse {
+    width: 100%;
+  }
+
+  .pedidosPanel .deFlex2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pedidosTableWrap {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* En móvil la tabla pasa a tarjetas (ver .tableCards en adminTables.css):
+     se anulan el ancho mínimo y la columna de acciones fija de escritorio. */
+  .pedidosPanel .table.tableCards {
+    min-width: 0;
+  }
+
+  .pedidosPanel .table.tableCards tbody td {
+    white-space: normal;
+    padding: 0.32rem 0;
+  }
+
+  .pedidosPanel .table.tableCards tbody td:last-child,
+  .pedidosPanel .table.tableCards tbody tr:hover td:last-child {
+    position: static;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .pedidosPanel .table.tableCards tbody tr:not(:last-child) td {
+    border-bottom: none;
   }
 
   .pedidosPanel .flexGrap {

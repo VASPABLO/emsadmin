@@ -71,6 +71,25 @@
     }
 }
 
+@media (max-width: 768px) {
+    .dashboardMain,
+    .containerSection {
+        min-height: calc(100vh - 60px);
+        padding: 0.75rem;
+        gap: 0.85rem;
+    }
+
+    .dashboardMain__content,
+    .containerSection > .container {
+        gap: 0.85rem;
+    }
+
+    .dashboardMain__row--top,
+    .dashboardMain__row--bottom {
+        min-height: 0;
+    }
+}
+
 @keyframes dashFadeUp {
     from {
         opacity: 0;
@@ -111,5 +130,84 @@
     .dashboardMain *::after {
         animation: none !important;
         transition: none !important;
+    }
+}
+/* Módulos CRUD (Productos, Categorías, Banners, Marcas, Destacados) en móvil:
+   cada uno trae su propio padding y fondo, que sumados al de .containerSection
+   dejaban un margen doble. Además las tarjetas de resumen iban una por fila.
+   Los selectores llevan .containerSection porque el CSS de cada módulo se
+   carga después que este y, con la misma especificidad, ganaría. */
+@media (max-width: 680px) {
+    .containerSection .productosAdmin,
+    .containerSection .categoriasAdmin,
+    .containerSection .bannersAdmin,
+    .containerSection .marcasAdmin,
+    .containerSection .destacadosAdmin {
+        min-height: 0;
+        padding: 0.25rem 0 0;
+        background: transparent;
+    }
+
+    .containerSection .productosAdmin__header h1,
+    .containerSection .categoriasAdmin__header h1,
+    .containerSection .bannersAdmin__header h1,
+    .containerSection .marcasAdmin__header h1,
+    .containerSection .destacadosAdmin__header h1 {
+        margin-top: 0.5rem;
+        font-size: 1.6rem;
+    }
+
+    .containerSection .productosAdmin__header p,
+    .containerSection .categoriasAdmin__header p,
+    .containerSection .bannersAdmin__header p,
+    .containerSection .marcasAdmin__header p,
+    .containerSection .destacadosAdmin__header p {
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    .productosAdmin .productosAdmin__topbar,
+    .categoriasAdmin .categoriasAdmin__stats,
+    .bannersAdmin .bannersAdmin__topbar,
+    .marcasAdmin .marcasAdmin__topbar,
+    .destacadosAdmin .destacadosAdmin__topbar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+        grid-auto-flow: column;
+        gap: 0.55rem;
+    }
+
+    .productosAdmin__topbar .statCard,
+    .categoriasAdmin__stats .statCard,
+    .bannersAdmin__topbar .statCard,
+    .marcasAdmin__topbar .statCard,
+    .destacadosAdmin__topbar .statCard {
+        min-width: 0;
+        padding: 0.65rem 0.75rem;
+        border-radius: 14px;
+    }
+
+    .productosAdmin__topbar .statCard span,
+    .categoriasAdmin__stats .statCard span,
+    .bannersAdmin__topbar .statCard span,
+    .marcasAdmin__topbar .statCard span,
+    .destacadosAdmin__topbar .statCard span {
+        font-size: 0.72rem;
+        line-height: 1.2;
+    }
+
+    .productosAdmin__topbar .statCard strong,
+    .categoriasAdmin__stats .statCard strong,
+    .bannersAdmin__topbar .statCard strong,
+    .marcasAdmin__topbar .statCard strong,
+    .destacadosAdmin__topbar .statCard strong {
+        font-size: 1.1rem;
+    }
+
+    /* Productos: filtros en 2 columnas (ID | Título, Categoría | Más vendido). */
+    .productosAdmin .filtrosContain {
+        grid-template-columns: 1fr 1fr;
+        padding: 0.75rem;
+        gap: 0.6rem;
     }
 }

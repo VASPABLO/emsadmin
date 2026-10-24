@@ -1,0 +1,51 @@
+/* Barra de acciones y filtros de Usuarios (antes sin estilos propios). */
+.usuariosPanel .deFlexContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.usuariosPanel .deFlex2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.usuariosPanel .deFlex2 > * {
+  margin: 0;
+}
+
+.usuariosPanel .filtrosContain {
+  margin-bottom: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+  align-items: center;
+}
+
+.usuariosPanel .reload,
+.usuariosPanel .reverse {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  justify-content: center;
+}
+
+@media (max-width: 1000px) {
+  .usuariosPanel .filtrosContain {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .usuariosPanel .filtrosContain {
+    grid-template-columns: 1fr 1fr;
+    padding: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .usuariosPanel .reload,
+  .usuariosPanel .reverse {
+    width: 100%;
+  }
+}
