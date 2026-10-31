@@ -20,16 +20,19 @@ RewriteBase /
     </FilesMatch>
 </IfModule>
 
-# Bloquear acceso al archivo .env
-
-<FilesMatch "^\.env$">
-Order allow,deny
-Deny from all
+# Bloquea el acceso web a los archivos de entorno (.env, .env.local, .env.backup...)
+# y al composer.json/lock. En producción este archivo queda en la raíz del dominio
+# junto con el backend, y reemplaza a backend/.htaccess (el deploy no sube ese), así
+# que tiene que llevar las mismas reglas.
+<FilesMatch "^(\.env.*|composer\.(json|lock))$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
 </FilesMatch>
-
-# O puedes usar esta otra forma de bloquear acceso al .env
-
-# RewriteRule ^\.env$ - [F,L]
 
 # Manejar rutas generales de tu aplicación
 

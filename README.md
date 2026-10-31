@@ -70,11 +70,18 @@ Los archivos `.env` se leen una sola vez, al arrancar: si cambiás
 
 ### Despliegue a producción
 
-1. `npm run build`.
-2. Subir el contenido de `build/` y el contenido de `backend/` a la raíz pública del
-   hosting (en producción los endpoints quedan en `/productos/...`, `/auth/...`, etc.).
-3. **No** subir `backend/.env.local`: el servidor usa su propio `backend/.env`.
-   `backend/.htaccess` bloquea el acceso web a los `.env` y al `composer.json/lock`.
+Automático: cada `git push` a `master` dispara `.github/workflows/deploy.yml`, que
+compila React, hace `composer install` y sube por SSH (rsync) el contenido de `build/`
+y de `backend/` a la raíz pública del hosting (en producción los endpoints quedan en
+`/productos/...`, `/auth/...`, etc.). También se puede lanzar a mano desde la pestaña
+**Actions** de GitHub → "Deploy a Hostinger" → "Run workflow".
+
+- El rsync no borra nada en el servidor y nunca sube `.env*`, `imagenes_*/`, `admin/`
+  ni `logs/*.log`: el servidor usa su propio `.env` y conserva las imágenes subidas.
+- `backend/.htaccess` no se sube (lo pisaría el de `build/`); por eso
+  `public/.htaccess` repite sus reglas de bloqueo de `.env*` y `composer.json/lock`.
+- Si cambia el esquema de la base, el deploy **no** lo aplica: hay que correr el
+  script de `backend/setup/` correspondiente a mano.
 
 ## Create React App
 

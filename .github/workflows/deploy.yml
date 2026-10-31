@@ -1,0 +1,83 @@
+# Despliegue automático a Hostinger en cada push a master.
+#
+# El servidor no tiene Node, así que el build de React se hace acá y se sube ya
+# compilado. En producción todo vive en la raíz pública del dominio:
+#   build/*   -> public_html/   (index.html, static/, .htaccess...)
+#   backend/* -> public_html/   (auth/, productos/, config/, vendor/...)
+#
+# rsync SIN --delete: solo agrega/actualiza, nunca borra en el servidor.
+# Además se excluye explícitamente lo que es propio del servidor:
+#   .env*            credenciales de producción
+#   imagenes_*/      imágenes subidas desde el panel
+#   admin/           imágenes antiguas (las URLs en la BD apuntan ahí)
+#   logs/*.log       logs del backend
+#
+# Secrets necesarios (Settings > Secrets and variables > Actions):
+#   SSH_HOST, SSH_PORT, SSH_USER, SSH_PRIVATE_KEY, SSH_KNOWN_HOSTS, DEPLOY_PATH
+
+name: Deploy a Hostinger
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Nunca dos despliegues a la vez.
+concurrency:
+  group: deploy-produccion
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build de React
+        run: |
+          npm ci
+          npm run build
+        env:
+          # Con CI=true, Create React App trata los warnings de ESLint como errores.
+          CI: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Dependencias de PHP
+        working-directory: backend
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Configurar SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Subir al servidor
+        env:
+          SSH_CMD: ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }} -o IdentitiesOnly=yes
+          DESTINO: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/
+        run: |
+          OPCIONES=(-rlz --itemize-changes --chmod=D755,F644
+            '--exclude=.env*' '--exclude=imagenes_*/' '--exclude=/admin/' '--exclude=logs/*.log')
+
+          # Backend primero. Su .htaccess de la raíz no se sube: el de build/
+          # (public/.htaccess) ya trae las mismas reglas de bloqueo.
+          rsync "${OPCIONES[@]}" --exclude=/.htaccess -e "$SSH_CMD" backend/ "$DESTINO"
+
+          # Frontend al final, para que index.html apunte a archivos ya subidos.
+          rsync "${OPCIONES[@]}" -e "$SSH_CMD" build/ "$DESTINO"
+
+      - name: Comprobar que el sitio responde
+        run: |
+          curl -fsS -o /dev/null https://emscrsoluciones.com/
+          curl -fsS https://emscrsoluciones.com/auth/userLogued.php
