@@ -185,17 +185,32 @@ export default function CatalogoVendedor() {
         );
     };
 
+    // Mientras escribe se guarda tal cual (si se ajustara al rango en cada tecla, al
+    // tipear "1" de "145000" saltaría al mínimo). Se ajusta recién al salir del campo.
     const cambiarPrecioVenta = (idProducto, valor) => {
+        setCarrito((prev) =>
+            prev.map((i) => (i.idProducto === idProducto ? { ...i, precioVenta: valor } : i))
+        );
+    };
+
+    const ajustarPrecioVenta = (idProducto) => {
         setCarrito((prev) =>
             prev.map((i) => {
                 if (i.idProducto !== idProducto) return i;
-                if (valor === '') return { ...i, precioVenta: '' };
-                let numero = Number(valor);
+                if (i.precioVenta === '' || Number.isNaN(Number(i.precioVenta))) return { ...i, precioVenta: i.precio };
+                let numero = Number(i.precioVenta);
                 if (i.precioMinimo !== null) numero = Math.max(numero, i.precioMinimo);
                 if (i.precioMaximo !== null) numero = Math.min(numero, i.precioMaximo);
                 return { ...i, precioVenta: numero };
             })
         );
+    };
+
+    const precioFueraDeRango = (item) => {
+        if (item.precioMinimo === null || item.precioMaximo === null) return false;
+        if (item.precioVenta === '') return true;
+        const numero = Number(item.precioVenta);
+        return Number.isNaN(numero) || numero < item.precioMinimo || numero > item.precioMaximo;
     };
 
     const quitarDelCarrito = (idProducto) => {
@@ -231,6 +246,13 @@ export default function CatalogoVendedor() {
         }
         if (!nombre.trim() || !email.trim() || !telefono.trim() || !entrega.trim()) {
             toast.error('Completa los datos del cliente');
+            return;
+        }
+        const fueraDeRango = carrito.find(precioFueraDeRango);
+        if (fueraDeRango) {
+            toast.error(
+                `El precio de "${fueraDeRango.titulo}" debe estar entre ₡${fueraDeRango.precioMinimo.toLocaleString('es-CR')} y ₡${fueraDeRango.precioMaximo.toLocaleString('es-CR')}`
+            );
             return;
         }
 
@@ -438,6 +460,7 @@ export default function CatalogoVendedor() {
                         <div className='catalogoVendedor__items'>
                             {carrito.map((item) => {
                                 const tieneRango = item.precioMinimo !== null && item.precioMaximo !== null;
+                                const fueraDeRango = precioFueraDeRango(item);
                                 const alTope = item.stock > 0 && item.cantidad >= item.stock;
                                 return (
                                     <div key={item.idProducto} className='catalogoVendedor__item'>
@@ -487,16 +510,21 @@ export default function CatalogoVendedor() {
                                                     </button>
                                                 </div>
 
-                                                <label className='catalogoVendedor__itemField'>
+                                                <label className={`catalogoVendedor__itemField${fueraDeRango ? ' catalogoVendedor__itemField--error' : ''}`}>
                                                     <span>Precio{tieneRango ? ` (₡${item.precioMinimo.toLocaleString('es-CR')}–₡${item.precioMaximo.toLocaleString('es-CR')})` : ''}</span>
                                                     <input
                                                         type='number'
+                                                        inputMode='numeric'
                                                         value={item.precioVenta}
                                                         min={item.precioMinimo ?? undefined}
                                                         max={item.precioMaximo ?? undefined}
+                                                        step='any'
                                                         disabled={!tieneRango}
+                                                        title={tieneRango ? undefined : 'Este producto no tiene rango de precio: se vende al precio de lista'}
                                                         onChange={(e) => cambiarPrecioVenta(item.idProducto, e.target.value)}
+                                                        onBlur={() => ajustarPrecioVenta(item.idProducto)}
                                                     />
+                                                    {fueraDeRango && <small>Fuera del rango permitido</small>}
                                                 </label>
 
                                                 <span className='catalogoVendedor__itemSubtotal'>

@@ -749,6 +749,18 @@
     color: #64748b;
 }
 
+.catalogoVendedor__itemField--error input,
+.catalogoVendedor__itemField--error input:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.14);
+}
+
+.catalogoVendedor__itemField--error small {
+    color: #dc2626;
+    font-size: 0.66rem;
+    font-weight: 600;
+}
+
 .catalogoVendedor__itemSubtotal {
     font-weight: 800;
     color: #15803d;
