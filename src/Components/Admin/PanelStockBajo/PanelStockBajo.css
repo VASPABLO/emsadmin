@@ -8,6 +8,34 @@
     height: 100%;
 }
 
+.panelStockBajo__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.panelStockBajo__excel {
+    border: none;
+    border-radius: 11px;
+    min-height: 38px;
+    padding: 0 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.panelStockBajo__excel:hover {
+    opacity: 0.85;
+}
+
 .panelStockBajo__header h3 {
     margin: 0;
     color: #0f172a;
