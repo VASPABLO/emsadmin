@@ -97,7 +97,7 @@ export default function DestacadosData() {
         </div>
 
         <div className='destacadosAdmin__actions'>
-          <button className='adminActionBtn adminActionBtn--ghost' onClick={cargarDestacados}>
+          <button className='adminActionBtn adminActionBtn--ghost' onClick={() => window.location.reload()}>
             <FontAwesomeIcon icon={faSync} />
             Recargar
           </button>

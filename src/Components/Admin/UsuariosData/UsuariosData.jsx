@@ -164,9 +164,6 @@ export default function UsuariosData() {
 
         pdf.save('usuarios.pdf');
     };
-    const recargarUsuarios = () => {
-        cargarUsuarios();
-    };
     const invertirOrden = () => {
         setUsuarios([...usuarios].reverse());
         setOrdenInvertido(!ordenInvertido);
@@ -207,7 +204,7 @@ export default function UsuariosData() {
                         </select>
                     </div>
 
-                    <button className='reload' onClick={recargarUsuarios} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
+                    <button className='reload' onClick={() => window.location.reload()} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
                     <button className='reverse' onClick={invertirOrden} aria-label='Invertir orden' title='Invertir orden'>
                         {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
                     </button>

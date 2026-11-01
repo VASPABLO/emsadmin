@@ -153,7 +153,7 @@ export default function CategoriasData() {
                 </div>
 
                 <div className='categoriasAdmin__actions'>
-                    <button className='adminActionBtn adminActionBtn--ghost' onClick={cargarCategoria}>
+                    <button className='adminActionBtn adminActionBtn--ghost' onClick={() => window.location.reload()}>
                         <FontAwesomeIcon icon={faSync} />
                         Recargar
                     </button>

@@ -97,7 +97,7 @@ export default function MarcasData() {
         </div>
 
         <div className='marcasAdmin__actions'>
-          <button className='adminActionBtn adminActionBtn--ghost' onClick={cargarMarcas}>
+          <button className='adminActionBtn adminActionBtn--ghost' onClick={() => window.location.reload()}>
             <FontAwesomeIcon icon={faSync} />
             Recargar
           </button>

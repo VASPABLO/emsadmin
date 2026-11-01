@@ -98,7 +98,7 @@ export default function BannerData() {
                 </div>
 
                 <div className='bannersAdmin__actions'>
-                    <button className='adminActionBtn adminActionBtn--ghost' onClick={cargarBanners}>
+                    <button className='adminActionBtn adminActionBtn--ghost' onClick={() => window.location.reload()}>
                         <FontAwesomeIcon icon={faSync} />
                         Recargar
                     </button>

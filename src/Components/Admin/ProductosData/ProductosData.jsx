@@ -197,9 +197,6 @@ export default function ProductosData() {
         pdf.save('productos.pdf');
     };
 
-    const recargarProductos = () => {
-        cargarProductos();
-    };
     const invertirOrden = () => {
         setProductos([...productos].reverse());
         setOrdenInvertido(!ordenInvertido);
@@ -353,7 +350,7 @@ export default function ProductosData() {
                     <ImportarProductos categorias={categorias} onImported={cargarProductos} />
                     <button className='excel' onClick={descargarExcel}><FontAwesomeIcon icon={faArrowDown} /> Excel</button>
                     <button className='pdf' onClick={descargarPDF}><FontAwesomeIcon icon={faArrowDown} /> PDF</button>
-                    <button className='reload' onClick={recargarProductos}><FontAwesomeIcon icon={faSync} /> Recargar</button>
+                    <button className='reload' onClick={() => window.location.reload()}><FontAwesomeIcon icon={faSync} /> Recargar</button>
                 </div>
             </div>
 

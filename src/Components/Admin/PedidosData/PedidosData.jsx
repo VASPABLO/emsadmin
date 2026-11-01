@@ -156,9 +156,6 @@ export default function PedidosData() {
     });
 
 
-    const recargarProductos = () => {
-        cargarPedidos();
-    };
     const invertirOrden = () => {
         setPedidos([...pedidos].reverse());
         setOrdenInvertido(!ordenInvertido);
@@ -436,7 +433,7 @@ export default function PedidosData() {
                             <option value="Cancelado">Cancelado</option>
                         </select>
                     </div>
-                    <button className='reload' onClick={recargarProductos} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
+                    <button className='reload' onClick={() => window.location.reload()} aria-label='Recargar' title='Recargar'><FontAwesomeIcon icon={faSync} /></button>
                     <button className='reverse' onClick={invertirOrden} aria-label='Invertir orden' title='Invertir orden'>
                         {ordenInvertido ? <FontAwesomeIcon icon={faArrowUp} /> : <FontAwesomeIcon icon={faArrowDown} />}
                     </button>
